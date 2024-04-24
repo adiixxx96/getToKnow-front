@@ -1,0 +1,46 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/register.css}" />
+</head>
+<body>
+
+<div class="d-flex flex-row register-container">
+	<div class="brand-ad d-flex flex-column">
+		<img src="../../images/logo-icon.png" alt="Logo" width="180" height="180" class="d-inline-block">
+		<h4 class="text-light brand-text" th:text="#{register.brand.caption}">Texto página registro</h4>
+	</div>
+	
+	<div class="register-form d-flex flex-column">
+		<h2 th:text="#{register.form.title}" class="text-light text-center section-title">Datos personales</h2>
+		
+		<form>
+		  <div class="mb-5">
+		    <label for="fullname" class="form-label text-light mb-0">Nombre y apellidos</label>
+		    <input type="text" class="form-control rounded-0" id="fullname">
+		  </div>
+		  <div class="mb-5">
+		    <label for="email" class="form-label text-light mb-0">Email</label>
+		    <input type="email" class="form-control rounded-0" id="email">
+		  </div>
+		  <div class="mb-5">
+		    <label for="password" class="form-label text-light mb-0">Contraseña</label>
+		    <input type="password" class="form-control rounded-0" id="password">
+		  </div>
+		  <div class="mb-5">
+		    <label for="birthDate" class="form-label text-light mb-0">Fecha de nacimiento</label>
+		    <input type="date" class="form-control rounded-0" id="birthDate">
+		  </div>
+		  <div class="mb-5 form-check">
+		    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+		    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+		  </div>
+		 
+		  <button type="submit" class="btn btn-secondary rounded-pill">Regístrate</button>
+		</form>
+		
+	</div>
+</div>
+
+</body>
+</html>

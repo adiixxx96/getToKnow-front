@@ -1,0 +1,23 @@
+@charset "UTF-8";
+
+.social-networks i:hover {
+	 filter: brightness(85%);
+	 cursor: pointer;	
+}
+
+.vertical-bar {
+  width: 1px;
+  background-color: #ffffff;
+  margin: 0 10px;
+  align-self: stretch;
+}
+
+.logo-copyright img {
+	width:50%;
+	margin-top: 5px;
+}
+
+.logo-copyright span {
+	font-size: 11px;
+	margin-top: 10px;
+}

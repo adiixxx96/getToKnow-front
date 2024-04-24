@@ -135,17 +135,10 @@
 			<version>2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.adape.gtk</groupId>
-			<artifactId>gtk-core</artifactId>
-			<version>${gtk-core.version}</version>
-			<classifier>integration</classifier>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        	<groupId>com.adape.gtk</groupId>
+        	<artifactId>gtk-core</artifactId>
+        	<version>${gtk-core.version}</version>
+    	</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>

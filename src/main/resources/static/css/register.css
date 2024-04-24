@@ -1,0 +1,76 @@
+@charset "UTF-8";
+
+.register-container {
+	height: 100%;
+}
+
+.section-title {
+	margin: 25px 0;
+}
+
+.brand-ad {
+	background-color: #0FF4C6;
+	width: 40%;
+  	display: flex;
+  	justify-content: center;
+  	align-items: center;
+}
+
+.register-form {
+	background-color: #464F51;
+	width: 60%;
+  	display: flex;
+  	justify-content: center;
+  	align-items: center;
+}
+
+.brand-text {
+	width: 65%;
+  	text-align: center;
+  	margin-top: 30px;
+}
+
+form {
+	width: 70%;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"] {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus {
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #D68FD6;
+  padding: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  outline:none !important;
+ outline-width: 0 !important;
+ box-shadow: none;
+-moz-box-shadow: none;
+-webkit-box-shadow: none;
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+.btn {
+	width: 150px;
+	font-weight: bold;
+}
