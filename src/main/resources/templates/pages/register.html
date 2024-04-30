@@ -12,35 +12,55 @@
 	</div>
 	
 	<div class="register-form d-flex flex-column">
+		<div id="messages">
+			<div th:replace="fragments/common/messages"></div>
+		</div>
+		
 		<h2 th:text="#{register.form.title}" class="text-light text-center section-title">Datos personales</h2>
 		
-		<form>
+		<form id="registerForm" th:action="@{save}" method="post">
 		  <div class="mb-5">
-		    <label for="fullname" class="form-label text-light mb-0">Nombre y apellidos</label>
-		    <input type="text" class="form-control rounded-0" id="fullname">
+		    <label for="fullname" class="form-label text-light mb-0" th:text="#{form.label.fullname}">Nombre y apellidos</label>
+		    <input type="text" class="form-control rounded-0 text-light" id="fullname" name="fullname">
+		    <div class="invalid-feedback" style="display: none;" id="fullnameError">Este campo es obligatorio.</div>
 		  </div>
 		  <div class="mb-5">
-		    <label for="email" class="form-label text-light mb-0">Email</label>
-		    <input type="email" class="form-control rounded-0" id="email">
+		    <label for="email" class="form-label text-light mb-0" th:text="#{form.label.email}">Email</label>
+		    <div class="input-with-icon">
+		    	<i class="fas fa-envelope fa-lg"></i>
+		    	<input type="email" class="form-control rounded-0 text-light" id="email" name="email">
+		    </div>
+		    <div class="invalid-feedback" style="display: none;" id="emailError">Este campo es obligatorio y debe ser un email válido.</div>
 		  </div>
 		  <div class="mb-5">
-		    <label for="password" class="form-label text-light mb-0">Contraseña</label>
-		    <input type="password" class="form-control rounded-0" id="password">
+		    <label for="password" class="form-label text-light mb-0" th:text="#{form.label.password}">Contraseña</label>
+		    <div class="input-with-icon-right">
+		    	<input type="password" class="form-control rounded-0 text-light" id="password" name="password">
+		    	<i class="fas fa-eye fa-lg toggle-password"></i>
+		    </div>
+		    <div class="invalid-feedback" style="display: none;" id="passwordError">Este campo es obligatorio y debe tener mínimo 8 caracteres.</div>
 		  </div>
 		  <div class="mb-5">
-		    <label for="birthDate" class="form-label text-light mb-0">Fecha de nacimiento</label>
-		    <input type="date" class="form-control rounded-0" id="birthDate">
+		    <label for="birthDate" class="form-label text-light mb-0" th:text="#{form.label.birthdate}">Fecha de nacimiento</label>
+		    <div class="input-with-icon">
+        		<i class="fas fa-calendar-alt fa-lg"></i>
+		    	<input type="text" class="form-control rounded-0 text-light dateInput" id="birthDate" name="birthDate" placeholder="DD/MM/AAAA">
+		    </div>
+		    <div class="invalid-feedback" style="display: none;" id="birthDateError">Este campo es obligatorio y debe ser una fecha válida con formato dd/mm/aaaa.</div>
 		  </div>
 		  <div class="mb-5 form-check">
-		    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-		    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+		    <input type="checkbox" class="form-check-input" id="acceptTerms">
+		    <label class="form-check-label text-light" for="acceptTerms" th:text="#{form.label.acceptterms}">Aceptar términos y condiciones</label>
+		    <div class="invalid-feedback" style="display: none;" id="acceptTermsError">Debes aceptar los términos y condiciones para registrarte.</div>
 		  </div>
 		 
-		  <button type="submit" class="btn btn-secondary rounded-pill">Regístrate</button>
+		  <button type="submit" onclick="validateData(this.form)" class="btn btn-secondary rounded-pill registerBtn" th:text="#{form.button.register}">Regístrate</button>
 		</form>
 		
 	</div>
 </div>
-
+<script type="text/javascript" src="../../../static/js/register.js"
+		th:src="@{/js/register.js}"></script>
+		
 </body>
 </html>
