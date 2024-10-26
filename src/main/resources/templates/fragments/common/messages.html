@@ -1,11 +1,11 @@
 
 <div th:fragment="messages" class="mt-4">
-	<div class="alert alert-success alert-dismissable fade show" role="alert"
+	<div class="alert alert-success alert-dismissable fade show d-flex justify-content-between" role="alert"
 		th:if="${success != null}">
 		<label th:utext="${success}" class="pr-4"></label>
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>		
 	</div>
-	<div class="alert alert-danger alert-dismissable fade show" role="alert"
+	<div class="alert alert-danger alert-dismissable fade show d-flex justify-content-between" role="alert"
 		th:if="${error != null}">
 		<label th:utext="${error}" class="pr-4"></label>
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>	

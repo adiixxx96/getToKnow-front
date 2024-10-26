@@ -1,0 +1,59 @@
+@charset "UTF-8";
+
+#main-container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+}
+
+.event-column-one {
+    flex: 0 0 15%;             
+    padding-right: 20px;
+}
+
+.event-column-two {
+    flex: 0 0 80%;             
+    padding-left: 20px;        
+}
+
+.vertical-line {
+	width: 1px;
+	background-color: #8b9597;
+	margin: 0 25px;
+}
+
+.tabs .btn-shadow {
+	height: 70px;
+}
+
+.tabs i {
+	margin-right: 15px;
+}
+
+#personalData {
+    position: relative;
+}
+
+.user-avatar .avatar-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 100px;
+}
+
+.user-avatar .profile-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.form-actions {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+}

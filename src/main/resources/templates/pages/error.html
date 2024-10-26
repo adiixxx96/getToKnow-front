@@ -1,0 +1,20 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/error.css}" />
+</head>
+<body>
+	<div class="content">
+		<h2 th:text="#{page.error.title}" class="text-body text-center section-title">Error</h2>
+		<div class="card-container d-flex justify-content-center align-items-center">
+			<div class="card">
+			  <div class="card-body d-flex flex-column align-items-center">
+			    <h6 class="card-subtitle mb-2 text-body-secondary" th:text="#{page.error.message}">
+			    	La ruta especificada no existe o no tienes permisos para acceder a ella</h6>
+			    <a href="/" class="btn btn-primary rounded-pill errorBtn" th:text="#{page.error.button}">Volver a la página de inicio</a>
+			  </div>
+			</div>
+		</div>
+	</div>	
+</body>
+</html>

@@ -1,0 +1,132 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/event.css}" />
+</head>
+<body class="with-menu">
+	<header
+		th:replace="fragments/common/header :: header">
+	</header>
+		<main>
+		
+		<div id="messages">
+			<div th:replace="fragments/common/messages"></div>
+		</div>
+		<div id="messagesJs" style="display: none;">
+			<div th:replace="fragments/common/messagesJs"></div>
+		</div>
+		
+		<div class="event-header-container section-title d-flex flex-column align-items-center justify-content-center">
+			<h2 th:text="#{event.list.title}" class="text-body text-center">Busca y explora todos los planes y eventos</h2>
+			<a th:if="${isLogged}" href="/event/create" class="btn btn-outline-secondary btn-sm rounded-pill mt-3 px-4 py-3 createEventButton" 
+	      		th:text="#{eventList.create.button}">Crea tu propio evento</a>
+	    </div>
+		
+		<div class="events-container w-90 d-flex flex-row justify-content-between">
+		<!-- 	Filters -->
+			<div class="d-flex flex-row justify-content-between filter-container">
+				<div class="d-flex flex-column w-100">
+					<div class="form-buttons d-flex justify-content-between">
+						<button type="submit" onclick="search(true)" class="btn btn-secondary rounded-pill filterBtn" th:text="#{form.button.filter}">Filtrar</button>
+						<button type="reset" onclick="resetFilters()" class="btn btn-link resetBtn" th:text="#{form.button.reset}">Resetear</button>
+					</div>	
+					<div class="form-inputs">
+	<!-- 					Título / descripción -->
+						<div class="horizontal-line"></div>
+						<label for="body" class="form-label text-body mb-0" th:text="#{form.label.event.body}">Título/descripción</label>
+			    		<input type="text" class="form-control rounded text-body" id="body" name="body">
+	<!-- 		    		Provincia -->
+						<div class="horizontal-line"></div>
+						<label for="province" class="form-label text-body mb-0" th:text="#{form.label.event.province}">Provincia</label>
+						<select id="province" name="province" class="form-control rounded text-body custom-select">
+	            			<option value="" selected th:text="#{form.placeholder.event.province}"></option>
+	            			<option th:each="province : ${provinces}"
+	                    		th:value="${province.id}"
+	                    		th:text="${province.name}">
+	           				 </option>
+	        			</select>
+	<!-- 		    		Localidad -->
+			    		<div class="horizontal-line"></div>
+						<label for="city" class="form-label text-body mb-0" th:text="#{form.label.event.city}">Localidad</label>
+			    		<input type="text" class="form-control rounded text-body" id="city" name="city">
+	<!-- 		    		Fecha evento -->
+						<div class="horizontal-line"></div>		    		
+			    		<label class="form-label text-body mb-0" th:text="#{form.label.event.eventdate}"></label>
+						<div class="date-range-container d-flex">
+							<input type="text" th:placeholder="#{placeholder.from}" class="form-control rounded text-body date-input"
+								id="eventDateFrom" name="daterange" th:value="''" />
+							<input type="text" th:placeholder="#{placeholder.to}" class="form-control rounded text-body date-input"
+								id="eventDateTo" name="daterange" th:value="''" />
+						</div>
+	<!-- 		    		Categorías -->
+						<div class="horizontal-line"></div>
+						<label for="categories" class="form-label text-body mb-0" th:text="#{form.label.event.categories}">Categorías</label>
+						<div class="category-container d-flex flex-wrap" id="category-container">
+	            			<div th:each="category : ${categories}" class="category-item d-flex align-items-center">
+	                			<input type="checkbox" th:id="'category-' + ${category.id}" th:value="${category.id}" th:name="categories" 
+	                				th:checked="${selectedCategoryId != null} ? ${category.id == selectedCategoryId} : false" />
+	               			 	<label th:for="'category-' + ${category.id}" th:text="${category.category}"></label>
+	           				</div>
+	        			</div>
+	<!-- 		    		Precio -->
+						<div class="horizontal-line"></div>
+						<label class="form-label text-body mb-0" th:text="#{form.label.event.price}">Precio</label>
+						<div class="slider-container slider-round" id="price-slider"></div>
+						    <div class="slider-range d-flex">
+						    	<div>
+						      		<label for="priceFrom" th:text="#{label.from}">Desde:</label>
+								    <input type="text" id="priceFrom" class="form-control rounded text-body" readonly>
+								</div>
+								<div>
+								    <label for="priceTo" th:text="#{label.to}">Hasta:</label>
+								    <input type="text" id="priceTo" class="form-control rounded text-body" readonly>
+								</div>
+						    </div>
+	<!-- 		    		Asistentes confirmados -->
+						<div class="horizontal-line"></div>
+						<label class="form-label text-body mb-0" th:text="#{form.label.event.participants}">Asistentes confirmados</label>
+						<div class="slider-container slider-round" id="participants-slider"></div>
+						    <div class="slider-range d-flex">
+						    	<div>
+						      		<label for="participantsFrom" th:text="#{label.from}">Desde:</label>
+								    <input type="text" id="participantsFrom" class="form-control rounded text-body" readonly>
+								</div>
+								<div>
+								    <label for="participantsTo" th:text="#{label.to}">Hasta:</label>
+								    <input type="text" id="participantsTo" class="form-control rounded text-body" readonly>
+								</div>
+						    </div>
+	<!-- 		    		Tags -->
+						<div class="horizontal-line"></div>
+						<label for="tags" class="form-label text-body mb-0" th:text="#{form.label.event.tags}">Tags</label>
+						<div class="tag-container d-flex flex-wrap" id="tag-container">
+	            			<div th:each="tag : ${tags}" class="tag-item d-flex align-items-center">
+	                			<input type="checkbox" th:id="'tag-' + ${tag.id}" th:value="${tag.id}" th:name="tags" />
+	               			 	<label th:for="'tag-' + ${tag.id}" th:text="${tag.tag}"></label>
+	           				</div>
+	        			</div>
+	        			<div class="horizontal-line"></div>
+					</div>
+				</div>
+				</div>
+				<div class="vertical-line"></div>
+				
+				<div id="eventContainer" class="d-flex flex-column">			
+					<div th:replace="fragments/eventListCards :: eventListCards" id="eventContainer"></div>
+				</div>
+		</div>
+	</main>
+	
+	<footer th:replace="fragments/common/footer :: footer"></footer>
+	
+	<script th:inline="javascript">
+		var isLogged = /*[[${isLogged}]]*/[];
+		var events = /*[[${events}]]*/[];
+		var totalPages = /*[[${totalPages}]]*/[];
+		var userId = /*[[${user != null ? user.id : 0}]]*/ 0;
+	</script>
+	
+	<script type="text/javascript" src="../../../static/js/event.js"
+		th:src="@{/js/event.js}"></script>	
+</body>
+</html>

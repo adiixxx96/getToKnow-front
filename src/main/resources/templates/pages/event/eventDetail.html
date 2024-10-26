@@ -1,0 +1,302 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/event.css}" />
+</head>
+<body class="with-menu">
+	<header
+		th:replace="fragments/common/header :: header">
+	</header>
+	
+	<main>	
+		<div id="messages">
+			<div th:replace="fragments/common/messages"></div>
+		</div>
+		<div id="messagesJs" style="display: none;">
+			<div th:replace="fragments/common/messagesJs"></div>
+		</div>
+		
+<!-- 		Show this page if user has NOT joined the event -->
+		<div th:if="${!joinedUser}" id="main-container" class="d-flex flex-row">
+			<div class="event-column-one">
+				<div class="event-detail-top">
+					<h3 class="text-body" th:text="${event.title}">Event title</h3>
+					<button class="btn btn-primary rounded-pill text-light joinEventBtn"
+						th:data-event-id="${event.id}"
+						data-toggle="tooltip"
+						data-placement="right"
+						th:text="#{event.detail.join.button.top}"
+						th:attr="onclick='joinEvent(' + ${event.id} + ')'" >Apúntame	
+					</button>
+				</div>
+				<div class="detail-img-container">
+					<img th:src="${'../../' + event.image}" alt="Imagen del evento">
+				</div>
+				<div class="event-description mt-4">
+					<h6 class="text-body-bold mb-3" th:text="#{event.description.title}">Todo lo que tienes que saber:</h6>
+					<p class="text-body" th:text="${event.description}">Event description</p>
+				</div>
+				<div class="text-center">
+				    <button class="btn btn-primary btn-sm rounded-pill text-light mb-5 joinEventBtn events-detail-bottom"
+				        th:data-event-id="${event.id}"
+				        data-toggle="tooltip"
+				        data-placement="right"
+				        th:text="#{event.detail.join.button.bottom}"
+				        th:attr="onclick='joinEvent(' + ${event.id} + ')'">Quiero unirme
+				    </button>
+				</div>
+			</div>
+			
+			<div class="event-column-two">
+				<div class="event-detail-top d-flex align-items-center">
+					<div class="user-container d-flex">
+						<div class="user-avatar">
+				        <img th:if="${eventOwner.profileImage != null}"
+				             th:src="${'../../' + eventOwner.profileImage}"
+				             alt="Imagen del organizador"
+				             class="profile-image">		        
+				        <div th:if="${eventOwner.profileImage == null}"
+				             class="avatar-circle bg-secondary-light text-light-bold"
+				             th:text="${eventOwner.fullname.substring(0, 1)}">
+				        </div>
+				    </div>
+						<div class="user-container-text d-flex flex-column text-body ms-3">
+							<p class="text-body d-flex" th:text="#{event.detail.owner.title}">Organizado por</p>
+							<p class="text-body-bold d-flex" th:text="${eventOwner.fullname}">Owner fullname</p>
+						</div>
+					</div>
+				</div>
+				<div class="event-details">
+					<div class="d-flex pb-4 align-items-center">
+						<i class="fas fa-calendar-alt fa-xl me-2"></i>
+						<p class="card-text" th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')}">Event date</p>
+					</div>
+					<div class="d-flex pb-4 align-items-center">
+						<i class="fa-regular fa-clock fa-xl me-2"></i>
+						<p class="card-text" th:text="${#dates.format(event.eventDate, 'HH:mm')}">Event time</p>
+					</div>
+					<div class="d-flex pb-4 align-items-center">
+						<i class="fa-solid fa-location-dot fa-xl me-2"></i>
+						<p class="card-text" th:text="${event.address != null ? event.address : ''} 
+						      	+ ', ' + ${event.city != null ? event.city : ''} + ', ' 
+						       + ${event.province != null ? province : ''}">Full address
+						</p>
+					</div>
+					<div class="d-flex pb-4 align-items-center">
+						<i class="fa-solid fa-tag fa-xl me-2"></i>
+						<p class="card-text" th:text="${event.price} + '€'">Price</p>
+					</div>
+					<div class="d-flex pb-4 align-items-center">
+						<i class="fa-solid fa-users fa-lg me-2"></i>
+						<p class="card-text" th:text="${eventParticipants.size()} + ' / ' + ${event.maxParticipants} +  ' personas apuntadas'">People joined</p>
+					</div>
+					<div class="tag-container d-flex flex-row justify-flex-start gap-2">
+						<div th:each="tag : ${event.tags}" class="tag-item d-flex align-items-center">
+		               		<div class="tagPill" th:text="${tag.tag.tag}"></div>
+		           		</div>
+		           	</div>
+				</div>
+			</div>
+		</div>
+		
+<!-- 		Show this page if user has joined the event -->
+		<div th:if="${joinedUser}" id="main-container" class="d-flex flex-row">
+			<div class="event-column-one">
+				<div class="event-detail-top">
+					<h3 class="text-body" th:text="${event.title}">Event title</h3>
+<!-- 					Button disjoin event if no owner -->
+					<button class="btn btn-danger btn-sm rounded-pill text-light disjoinEventBtn"
+						th:if="${user != null and user.id != eventOwner.id}"
+						th:data-event-id="${event.id}"
+						th:text="#{event.detail.disjoin.button}"
+						th:attr="onclick='disjoinEvent(' + ${event.id} + ')'" >Desapuntarme	
+					</button>
+<!-- 					Button edit if owner -->
+					<a class="btn btn-outline-primary btn-sm rounded-pill text-body editEventBtn"
+					   th:if="${user != null and user.id == eventOwner.id}"
+					   th:href="@{'/event/edit/' + ${event.id}}"
+					   th:text="#{event.detail.edit.button}">Edita tu evento</a>
+				</div>
+				<div class="detail-img-container">
+					<img th:src="${'../../' + event.image}" alt="Imagen del evento">
+				</div>
+				<div class="event-details joined mt-4">
+					<div class="event-details-row d-flex">
+						<div class="d-flex pb-4 align-items-center col-8">
+							<i class="fas fa-calendar-alt fa-xl me-2"></i>
+							<p class="card-text" th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">Event date</p>
+						</div>
+						<div class="d-flex pb-4 align-items-center col-4">
+							<i class="fa-solid fa-tag fa-xl me-2"></i>
+							<p class="card-text" th:text="${event.price} + '€'">Price</p>
+						</div>
+					</div>
+					<div class="d-flex pb-4 align-items-center">
+						<i class="fa-solid fa-location-dot fa-xl me-2"></i>
+						<p class="card-text" th:text="${event.address != null ? event.address : ''} 
+						      	+ ', ' + ${event.city != null ? event.city : ''} + ', ' 
+						       + ${event.province != null ? province : ''}">Full address
+						</p>
+					</div>
+					<div class="tag-container d-flex flex-row justify-flex-start gap-2">
+						<div th:each="tag : ${event.tags}" class="tag-item d-flex align-items-center">
+		               		<div class="tagPill" th:text="${tag.tag.tag}"></div>
+		           		</div>
+		           	</div>				
+				</div>
+				<div class="event-description mt-4">
+					<h6 class="text-body-bold mb-3" th:text="#{event.description.title}">Todo lo que tienes que saber:</h6>
+					<p class="text-body" th:text="${event.description}">Event description</p>
+				</div>
+				<div class="comments-container mt-4 mb-5">
+					<h6 class="text-body-bold" th:text="#{event.comments.title}">Commentarios</h6>
+					<form id="saveComment" th:action="@{/event/saveComment}" method="post" class="mb-1">
+						<div class="mb-2 mt-20-negative">
+						  	<div class="d-flex flex-row justify-content-end">
+							    <span id="charCountComment" class="text-muted" th:text="#{form.comment.caracteres.count}">0 / 255 caracteres</span>
+						    </div>
+						    <textarea class="form-control rounded text-body" maxlength="255" id="comment" name="comment" th:placeholder="#{form.placeholder.comment}"></textarea>
+						    <div class="invalid-feedback" style="display: none;" id="commentError">El campo comentario no puede estar vacío</div>
+						</div>
+						<input type="hidden" name="eventId" th:value="${event.id}" />
+						<button class="btn btn-primary btn-sm rounded-pill text-light mt-2 publishCommentBtn"
+					        type="submit" onclick="validateComment(this.form, 'comment')"
+					        th:text="#{event.detail.publish.comment.button}">Publicar
+					    </button>
+					</form>
+					<div th:each="comment : ${parentComments}" class="pb-3">
+				        <!-- Parent comment -->
+				        <div class="comment mb-3">
+				            <div class="d-flex flex-column">
+				            	<div class="top-comment d-flex flex-row flex-start align-items-center gap-2">
+				                	<div class="user-avatar">
+								        <img th:if="${comment.user.profileImage != null}"
+								             th:src="${'../../' + comment.user.profileImage}"
+								             alt="Imagen del usuario del comentario"
+								             class="profile-image sm">		        
+								        <div th:if="${comment.user.profileImage == null}"
+								             class="avatar-circle sm bg-secondary-light text-light-bold"
+								             th:text="${comment.user.fullname.substring(0, 1)}">
+								        </div>
+							    	</div>
+				                    <div class="fw-bold" th:text="${comment.user.fullname}">User fullname</div>
+				                    <div class="text-muted ms-3" th:text="${#dates.format(comment.creationDate, 'dd/MM/yyyy HH:mm')}">Fecha comentario</div>
+				                    <button class="btn btn-link ms-2" th:attr="onclick='showReplyForm(' + ${comment.id} + ')'">
+									    <i class="fa-solid fa-reply fa-lg"></i>
+									</button>
+								</div>
+								<div class="comment-text ms-5" th:text="${comment.comment}">Comentario</div>
+				            </div>
+				
+				            <!-- Replies -->
+				            <div class="replies mt-2" th:if="${repliesMap.containsKey(comment.id)}">
+				                <div th:each="reply : ${repliesMap[comment.id]}" class="pb-2 pt-2">
+				                    <div class="d-flex flex-column">
+				                    	<div class="top-comment d-flex flex-row flex-start align-items-center gap-2">
+					                        <div class="user-avatar">
+										        <img th:if="${reply.user.profileImage != null}"
+										             th:src="${'../../' + reply.user.profileImage}"
+										             alt="Imagen del usuario de la respuesta"
+										             class="profile-image sm">		        
+										        <div th:if="${reply.user.profileImage == null}"
+										             class="avatar-circle sm bg-secondary-light text-light-bold"
+										             th:text="${reply.user.fullname.substring(0, 1)}">
+										        </div>
+									    	</div>
+					                        <div class="fw-bold" th:text="${reply.user.fullname}">User fullname reply</div>
+				                    		<div class="text-muted ms-3" th:text="${#dates.format(reply.creationDate, 'dd/MM/yyyy HH:mm')}">Fecha respuesta</div>
+					                   	</div>
+					                   	<div class="comment-text ms-5" th:text="${reply.comment}">Respuesta</div>
+				                    </div>
+				                </div>
+				            </div>
+				
+				            <!-- Reply form -->
+				            <div class="reply-form mt-2 ms-5" th:id="'reply-form-' + ${comment.id}" style="display: none;">
+				                <form id="saveReply" th:action="@{/event/saveComment}" method="post">
+				                    <div class="mb-2">
+					                    <div class="d-flex flex-row justify-content-end">
+										    <span id="charCountReply" class="text-muted" th:text="#{form.comment.caracteres.count}">0 / 255 caracteres</span>
+									    </div>
+				                        <textarea class="form-control rounded text-body" maxlength="255" name="reply" th:id="'reply-' + ${comment.id}" th:placeholder="#{form.placeholder.reply}"></textarea>
+				                        <div class="invalid-feedback" style="display: none;" th:id="'replyError-' + ${comment.id}">El campo respuesta no puede estar vacío</div>
+				                        <input type="hidden" name="parentId" th:value="${comment.id}"/>
+				                        <input type="hidden" name="eventId" th:value="${event.id}"/>
+				                    </div>
+				                    <button class="btn btn-sm btn-primary text-light rounded-pill publishCommentBtn" type="submit"
+				                    th:attr="onclick='validateComment(this.form, \'reply\', ' + ${comment.id} + ')'"
+				                    th:text="#{event.detail.publish.comment.button}">Publicar</button>
+				                </form>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+			</div>
+			
+			<div class="event-column-two">
+				<div class="event-detail-top d-flex align-items-center">
+					<div class="user-container d-flex">
+						<div class="user-avatar">
+					        <img th:if="${eventOwner.profileImage != null}"
+					             th:src="${'../../' + eventOwner.profileImage}"
+					             alt="Imagen del organizador"
+					             class="profile-image">		        
+					        <div th:if="${eventOwner.profileImage == null}"
+					             class="avatar-circle bg-secondary-light text-light-bold"
+					             th:text="${eventOwner.fullname.substring(0, 1)}">
+					        </div>
+				    	</div>
+						<div class="user-container-text d-flex flex-column text-body ms-3">
+							<p class="text-body d-flex" th:text="#{event.detail.owner.title}">Organizado por</p>
+							<p class="text-body-bold d-flex" th:text="${eventOwner.fullname}">Owner fullname</p>
+						</div>
+						<div class="d-flex align-items-center" th:if="${user != null and user.id != eventOwner.id}">
+							<i class="fa-solid fa-comments fa-xl me-2"
+							th:attr="onclick='openChat(' + ${eventOwner.id} + ')'"></i>
+						</div>
+					</div>
+				</div>
+				<div class="particpants-container">
+					<h6 class="text-body" th:text="'Asistentes (' + ${eventParticipants.size()} + ')'">Asistentes</h6>
+					<div th:each="participant : ${eventParticipants}">
+	               		<div class="user-container d-flex mt-3">
+							<div class="user-avatar">
+						        <img th:if="${participant.profileImage != null}"
+						             th:src="${'../../' + participant.profileImage}"
+						             alt="Imagen del participante"
+						             class="profile-image">		        
+						        <div th:if="${participant.profileImage == null}"
+						             class="avatar-circle bg-secondary-light text-light-bold"
+						             th:text="${participant.fullname.substring(0, 1)}">
+						        </div>
+					    	</div>
+							<div class="user-container-text d-flex flex-column text-body ms-3">
+								<p class="text-body-bold d-flex" th:text="${participant.fullname}">Participant fullname</p>
+								<p class="text-body d-flex" th:text="${participant.age} + ' años '">Participant age</p>
+								
+							</div>
+							<div class="d-flex align-items-center" th:if="${user != null and user.id != participant.id}">
+								<i class="fa-solid fa-comments fa-xl me-2"
+								th:attr="onclick='openChat(' + ${participant.id} + ')'"></i>
+							</div>
+						</div>
+	           		</div>	
+				</div>
+			</div>
+		</div>
+		
+		
+	</main>
+
+	<footer th:replace="fragments/common/footer :: footer"></footer>
+	
+	<script th:inline="javascript">
+		var isLogged = /*[[${isLogged}]]*/[];
+		var event = /*[[${event}]]*/[];
+		var userId = /*[[${user != null ? user.id : 0}]]*/ 0;
+	</script>
+	
+	<script type="text/javascript" src="../../../static/js/event.js"
+		th:src="@{/js/event.js}"></script>	
+</body>
+</html>

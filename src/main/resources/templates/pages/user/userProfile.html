@@ -1,0 +1,120 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/profile.css}" />
+</head>
+<body class="with-menu">
+	<header
+		th:replace="fragments/common/header :: header">
+	</header>
+	
+	<main>	
+		<div id="messages">
+			<div th:replace="fragments/common/messages"></div>
+		</div>
+		<div id="messagesJs" style="display: none;">
+			<div th:replace="fragments/common/messagesJs"></div>
+		</div>
+		
+		<h2 th:text="#{profile.title}" class="text-body text-center section-title">Área personal</h2>
+		<div id="main-container" class="d-flex flex-row">
+			
+			<div class="event-column-one">
+				<div class="tabs d-flex flex-column gap-3">
+					<div class="btn btn-shadow text-body d-flex align-items-center personalDataButton active" onclick="showSection('personalData', this)">
+						<i class="fa-solid fa-user fa-xl" style="color: #D68FD6;"></i>
+		    			<span class="text-start" th:text="#{profile.tab.personal.data}">Datos personales</span>
+					</div>
+					<div class="btn btn-shadow text-body d-flex align-items-center eventsParticipantButton" onclick="showSection('eventsParticipant', this)">
+						<i class="fa-regular fa-calendar-check fa-2xl" style="color: #D68FD6;"></i>
+		    			<span class="text-start" th:text="#{profile.tab.events.participant}">Eventos en los que participo</span>
+					</div>
+					<div class="btn btn-shadow text-body d-flex align-items-center eventsOwnerButton" onclick="showSection('eventsOwner', this)">
+						<i class="fa-regular fa-star fa-2xl" style="color: #D68FD6;"></i>
+		    			<span class="text-start" th:text="#{profile.tab.events.owner}">Mis eventos creados</span>
+					</div>
+				</div>				
+			</div>
+			
+			<div class="vertical-line"></div>
+			
+			<div class="event-column-two">
+				<div id="personalData" class="content-section d-flex flex-column align-items-center">
+					<div class="user-avatar">
+						<img th:if="${user.profileImage != null}"
+					         th:src="${'../../' + user.profileImage}"
+					         alt="Imagen de perfil"
+					         class="profile-image">		        
+					    <div th:if="${user.profileImage == null}"
+					         class="avatar-circle bg-secondary-light text-light-bold"
+					         th:text="${user.fullname.substring(0, 1)}">
+					    </div>
+				    </div>
+					<form id="userDataForm" th:action="@{/user/editProfile}" method="post" class="d-flex flex-column justify-content-center">
+						<div class="form-actions d-flex gap-3">
+							<button type="submit" onclick="validateData(this.form)" class="btn btn-secondary text-light rounded-pill saveDataBtn align-self-center" 
+			  				th:text="#{form.user.data.save}">Guardar cambios</button>
+			  				<button type="button" class="btn btn-empty">Cancelar</button>
+						</div>
+									
+						<div class="inputsRow d-flex flex-row justify-content-between">
+							<div class="mb-4 flex-grow-1">
+							    <label for="fullname" class="form-label text-body mb-0" th:text="#{form.label.user.fullname}">Nombre completo</label>
+							    <input type="text" class="form-control rounded text-body" id="fullname" name="fullname" th:value="${user.fullname}">
+							    <div class="invalid-feedback" style="display: none;" id="fullnameError">Este campo es obligatorio.</div>
+						  	</div>
+						  <div class="mb-4 flex-grow-1">
+						    <label for="profileImage" class="form-label text-body mb-0" th:text="#{form.label.user.imagen}">Imagen de perfil</label>
+						    <div class="input-with-icon-right">
+						    	<input type="text" class="form-control rounded text-body" id="profileImage" name="profileImage" 
+						    			th:value="${user.profileImage != null ? #strings.substringAfter(event.image, 'images/') : ''}" readonly>
+						    	<i class="fa-solid fa-arrow-up-from-bracket fa-lg"></i>
+						    </div>
+						   </div>
+						  <div class="mb-4 flex-grow-1">
+						    <label for="birthDate" class="form-label text-body mb-0" th:text="#{form.label.user.birthdate}">Fecha de nacimiento</label>
+						    <div class="input-with-icon">
+						    	<i class="fas fa-calendar-alt fa-lg"></i>
+						    	<input type="text" class="form-control rounded text-body dateInput" id="birthDate" name="birthDate" 
+						    			th:value="#dates.format(user.birthDate, 'dd/MM/yyyy')}" readonly>
+						    </div>
+						  </div>
+						</div>
+						<div class="inputsRow d-flex flex-row justify-content-between">
+							<div class="mb-4 flex-grow-1">
+							    <label for="email" class="form-label text-body mb-0" th:text="#{form.label.user.email}">Email</label>
+							    <input type="text" class="form-control rounded text-body" id="email" name="email" th:value="${user.email}" readonly>
+						  	</div>
+						  	<div class="mb-4 flex-grow-1">
+							    <label for="password" class="form-label text-body mb-0" th:text="#{form.label.user.password}">Contraseña</label>
+							    <div class="input-with-icon-right">
+							    	<input type="password" class="form-control rounded-0 text-body" id="password" name="password">
+							    	<i class="fas fa-eye fa-lg toggle-password"></i>
+							    </div>
+							    <div class="invalid-feedback" style="display: none;" id="passwordError">Este campo es obligatorio y debe tener mínimo 8 caracteres.</div>
+						  	</div>
+						</div>
+					</form>
+				</div>
+				<div id="eventsParticipant" class="content-section" style="display: none;">
+					<h3>Eventos en los que participo</h3>
+				</div>
+				<div id="eventsOwner" class="content-section" style="display: none;">
+					<h3>Mis eventos creados</h3>
+				</div>
+			</div>
+		</div>
+		
+		
+	</main>
+
+	<footer th:replace="fragments/common/footer :: footer"></footer>
+	
+	<script th:inline="javascript">
+
+	</script>
+	
+	<script type="text/javascript" src="../../../static/js/profile.js"
+		th:src="@{/js/profile.js}"></script>	
+</body>
+</html>

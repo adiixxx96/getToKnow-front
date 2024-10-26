@@ -12,11 +12,18 @@
 .bg-secondary {
 	background-color: #D68FD6 !important;
 }
+.bg-secondary-light {
+	background-color: #EBC6EB !important;
+}
 .bg-tertiary {
 	background-color: #DEFFF2 !important;
 }
 .bg-light {
 	background-color: #FFFFFF !important;
+}
+
+.bg-danger {
+	background-color: #fe1063 !important;
 }
 
 .bg-body-hover {
@@ -69,6 +76,12 @@
 	background-color: #DEFFF2 !important;
 	border-color: #DEFFF2 !important;
 }
+
+.btn-danger {
+	background-color: #fe1063 !important;
+	border-color: #fe1063 !important;
+}
+
 .btn-light {
 	background-color: #FFFFFF !important;
 	border-color: #FFFFFF !important;
@@ -90,21 +103,65 @@
 	background-color: #D68FD6 !important;
 }
 
+.btn-outline-danger {
+	border: 3px solid #fe1063 !important;
+}
 
-/* ********************Text******************** */
+.btn-outline-danger:hover {
+	background-color: #fe1063 !important;
+}
+
+.btn-shadow:hover, .btn-shadow.active {
+	cursor: pointer;
+	background-color: #fff;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+	border: none;
+	border-radius: 10px;
+}
+
+.btn-empty {
+	background-color: transparent;
+	border: none;
+}
+
+.btn-empty:hover {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+/* ********************Text and content disposition******************** */
 body {
 	font-family: 'Raleway', sans-serif;
 	font-size: 14px;
+	height: 100%;
+	min-height: 100vh;
+	display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
+body.with-menu {
+	padding-top: 76px
+}
+
+main {
+	flex-grow: 1;
+}
 
 /* ********************Width, Heights and Spacing******************** */
 .w-90 {
 	width: 90%;
 }
+.w-80 {
+	width: 80%;
+}
 
 .section-title {
 	margin: 60px 0;
+}
+
+.mt-20-negative {
+    margin-top: -20px;
 }
 
 /* ********************Calendars******************** */
@@ -113,4 +170,46 @@ body {
 	background-color:  #D68FD6 !important;
 }
 
+/* ********************Cursor******************** */
+button, a{
+	cursor: pointer;
+}
 
+/* ********************Pagination******************** */
+
+.pagination .page-link {
+    border-color: #D68FD6;
+    color: #464F51;
+}
+.pagination .page-link:hover {
+    background-color: #EBC6EB;
+    border-color: #D68FD6;
+    color: #464F51;
+}
+.pagination .page-item.active .page-link {
+    background-color: #EBC6EB !important;
+    border-color: #D68FD6 !important;
+    color: #464F51 !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.pagination .page-link[disabled] {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pagination .page-link[disabled]:hover {
+  border-color: #D68FD6;
+  color: #464F51;
+  background-color: transparent;
+}
+
+/* ********************Display******************** */
+.show-important {
+    display: flex !important;
+}
+
+.hide-important {
+    display: none !important;
+}

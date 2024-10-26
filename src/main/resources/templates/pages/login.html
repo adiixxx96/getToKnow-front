@@ -16,7 +16,8 @@
 	<div class="login-form d-flex flex-column">
 		<img src="../../images/logo-icon.png" alt="Logo" width="140" height="140" class="d-inline-block mb-4">
 		
-		<form id="registerForm" th:action="@{save}" method="post" class="d-flex flex-column">
+		<form id="loginForm" th:action="@{save}" method="post" class="d-flex flex-column">
+		
 		  <div class="mb-5">
 		    <label for="email" class="form-label text-body mb-0" th:text="#{form.label.email}">Email</label>
 		    <div class="input-with-icon">
@@ -32,7 +33,7 @@
 		    </div>
 		   </div>
 		 
-		  <button type="submit" class="btn btn-secondary rounded-pill loginBtn align-self-center" th:text="#{form.button.login}">Regístrate</button>
+		  <button type="submit" class="btn btn-secondary rounded-pill loginBtn align-self-center" th:text="#{form.button.login}">Inicia sesión</button>
 		</form>
 	</div>
 	

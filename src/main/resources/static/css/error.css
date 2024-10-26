@@ -1,0 +1,21 @@
+.card-container {
+    height: 200px;
+}
+
+.card-custom {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    width: 500px;
+}
+
+.card-body {
+    margin-top: 20px;
+}
+
+.errorBtn {
+	font-weight: bold;
+	margin-top: 30px;
+}

@@ -1,5 +1,11 @@
 @charset "UTF-8";
 
+
+.alert {
+	margin: 0 auto;
+	width: 500px;
+}
+
 .login-form {
 	width: 60%;
   	justify-content: center;

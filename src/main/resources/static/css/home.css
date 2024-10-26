@@ -3,3 +3,143 @@
 .carousel-item img{
 	height: 500px;
 }
+
+.alert {
+	margin: 0 auto;
+	width: 800px;
+}
+
+.eventCards {
+	margin: 0 auto;
+}
+
+.section-title {
+	margin-top: 60px;
+	margin-bottom: 30px;
+}
+
+.card {
+	height: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border: none;
+}
+
+.card-img-container {
+    position: relative;
+}
+
+.card img {
+	width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.card-body {
+	padding: 0;
+}
+
+.card-title {
+	margin-top: 10px;
+	margin-bottom: 0;
+	height: 40px;
+	text-decoration: none;
+}
+
+.card-title:hover {
+	text-decoration: underline;
+}
+
+.card i {
+	color: #D68FD6;
+}
+
+.btn-center {
+	text-align: center;
+}
+
+.joinEventBtn {
+	width: 120px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-top: 20px;
+	font-weight: normal;
+}
+
+.joinEventBtn.disabled {
+    pointer-events: auto;
+    cursor: default;
+    background-color: #c6cdcf !important;
+    border: 1px solid #c6cdcf !important;
+}
+
+.searchEventsBtn {
+	margin-top: 40px;
+	margin-bottom: 40px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-weight: bold;
+}
+
+.section-title-custom {
+	padding-top: 60px;
+	margin-bottom: 30px;
+}
+#categoryCards {
+	padding-bottom: 40px;
+}
+
+.categoryCard {
+	cursor: pointer;
+    width: 130px;
+    height: 90px;
+    padding: 8px 12px;
+    margin: 8px;
+    background-color: #FFF;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.categoryCard i {
+	font-size: 25px;
+	margin-bottom: 8px;
+}
+.categoryCard span {
+	font-size: 13px;
+	line-height: 20px;
+	font-weight: bold
+}
+
+.categoryCard:hover {
+    background-color: #DEFFF2;
+}
+
+.aboutus-card {
+	width: 80%;
+	background-color: #DEFFF2;
+	border-radius: 20px;
+	margin: 0 auto;
+	margin-bottom: 60px;	
+}
+
+.aboutus-section i {
+	font-size: 40px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.aboutus-section p {
+	font-size: 16px;
+	padding: 0 20px;
+}
+
+.vertical-line {
+    width: 4px;
+    height: 180px;
+    background-color: #8b9597;
+    margin: 0 20px;
+}

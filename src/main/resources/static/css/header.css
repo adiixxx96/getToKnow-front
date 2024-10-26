@@ -1,5 +1,12 @@
 @charset "UTF-8";
 
+#header {
+	position: fixed;
+	top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
 .navbar .btn-link:hover {
 	background-color: #555E60;
 }
@@ -37,5 +44,5 @@
 }
 
 #navbarLoggedContent {
-	width: 420px;
+	width: 450px;
 }

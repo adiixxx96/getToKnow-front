@@ -3,11 +3,12 @@
 	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
 </head>
-<body>
+<body class="with-menu">
 	<header
 		th:replace="fragments/common/header :: header">
 	</header>
-
+	
+	<main>
 <!-- 	Carrusel -->
 	<div id="carouselHome" class="carousel slide" data-bs-ride="carousel">
 	  <div class="carousel-indicators">
@@ -45,9 +46,109 @@
 	  </button>
 	</div>
 	
-<!-- 	Eventos populares -->
-<h2 th:text="#{home.events.title}" class="text-body text-center section-title">Eventos populares</h2>
+	<div id="messages">
+		<div th:replace="fragments/common/messages"></div>
+	</div>
+	<div id="messagesJs" style="display: none;">
+			<div th:replace="fragments/common/messagesJs"></div>
+	</div>
+	
+<!-- 	Eventos recientes -->
+<h2 th:text="#{home.events.title}" class="text-body text-center section-title">Eventos recientes</h2>
+<div class="row row-cols-1 row-cols-md-3 g-4 w-90 eventCards">
+  <div class="col" th:each="event : ${events}">
+    <div class="card">
+	  <div class="card-img-container">
+      	<img th:src="${event.image}" class="card-img-top" alt="Imagen del evento">
+      </div>
+      <div class="card-body d-flex flex-column justify-content-between">
+      	<div class=card-body-title>
+        	<h5 class="card-title">
+				<a class="card-title" th:href="@{'/event/detail/' + ${event.id}}" th:text="${event.title}">Event title</a>
+			</h5>
+        </div>
+        <div class=card-body-text>
+	        <div class="d-flex pt-3 align-items-center">
+	        	<i class="fa-solid fa-location-dot fa-lg me-2"></i>
+	        	<p class="card-text" th:text="${event.city}">Localidad</p>
+	        </div>
+	        <div class="d-flex pt-3 align-items-center">
+	        	<i class="fas fa-calendar-alt fa-lg me-2"></i>
+	        	<p class="card-text" th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">
+	        	Event date</p>
+	        </div>
+	        <div class="d-flex justify-content-between pt-3">
+	        	<div class="d-flex align-items-center">
+	        		<i class="fa-solid fa-users me-2"></i>
+	        		<p class="card-text"th:text="${event.participantsNumber} + ' personas apuntadas'">People joined</p>
+	        	</div>
+	        	<div class="d-flex align-items-center">
+	        		<i class="fa-solid fa-tag fa-lg me-2"></i>
+	        		<p class="card-text" th:text="${event.price} +€">Price</p>
+	        	</div>
+	        </div>
+	     </div>
+        <div class="btn-center">
+        	<button class="btn btn-primary btn-sm rounded-pill text-light joinEventBtn"
+				th:data-event-id="${event.id}"
+				data-toggle="tooltip"
+				data-placement="bottom"
+				th:attr="onclick='joinEvent(' + ${event.id} + ')'" >Apúntame	
+			</button>
+      	</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-	<footer th:replace="fragments/common/footer :: footer"></footer>
+<div class="btn-center">
+    <a href="/event/list/" class="btn btn-secondary rounded-pill text-light searchEventsBtn" th:text="#{home.event.search.button}">
+    Busca y explora todos nuestros eventos</a>
+</div>
+
+<!-- Categories filters -->
+<div class="bg-body categories-container">
+	<h2 th:text="#{home.categories.title}" class="text-light text-center section-title-custom">¿Qué te apasiona?</h2>
+	<div id="categoryCards" class="d-flex flex-row flex-wrap justify-content-center">
+		<a th:each="c : ${categories}" th:href="@{'/event/list?category=' + ${c.id}}" class="d-flex flex-column categoryCard align-items-center justify-content-start">
+				<i th:class="${iconMapper.getIconForCategory(c.category)}"
+					th:style="'color: ' + ${iconMapper.getColorForCategory(c.category)}"></i>
+				<span class="text-center text-ligth" th:text="${c.category}"></span>
+		</a>
+	</div>
+</div>
+
+<!-- About GTK -->
+<div class="aboutus-container">
+	<h2 th:text="#{home.aboutus.title}" class="text-body text-center section-title-custom">¿Por qué unirte a Get To Know?</h2>
+	<div class="aboutus-card d-flex flex-row justify-content-center align-items-center">
+		<div class="aboutus-section d-flex flex-column align-items-center py-4">
+			<i class="fa-brands fa-connectdevelop"></i>
+			<p class="text-center text-body" th:text="#{home.aboutus.text1}"></p>
+		</div>
+		<div class="vertical-line"></div>
+		<div class="aboutus-section d-flex flex-column align-items-center py-4">
+			<i class="fa-regular fa-calendar-check"></i>
+			<p class="text-center text-body" th:text="#{home.aboutus.text2}"></p>
+		</div>
+		<div class="vertical-line"></div>
+		<div class="aboutus-section d-flex flex-column align-items-center py-4">
+			<i class="fa-regular fa-heart"></i>
+			<p class="text-center text-body" th:text="#{home.aboutus.text3}"></p>
+		</div>
+	</div>
+</div>
+</main>
+
+<footer th:replace="fragments/common/footer :: footer"></footer>
+	
+	<script th:inline="javascript">
+		var isLogged = /*[[${isLogged}]]*/[];
+		var events = /*[[${events}]]*/[];
+		var userId = /*[[${user != null ? user.id : 0}]]*/ 0;
+	</script>
+	
+	<script type="text/javascript" src="../../../static/js/home.js"
+		th:src="@{/js/home.js}"></script>
 </body>
 </html>

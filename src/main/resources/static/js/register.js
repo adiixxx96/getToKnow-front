@@ -46,13 +46,13 @@ document.querySelector(".toggle-password").addEventListener("click", function() 
 function validateData(form) {
 	event.preventDefault();
 	
-	var fullname = $("#fullname").val().trim();
-	var email = $("#email").val().trim();
-	var password = $("#password").val().trim();
-	var birthDateString = $("#birthDate").val().trim();
-	var acceptTerms = $("#acceptTerms").is(":checked");
+	let fullname = $("#fullname").val().trim();
+	let email = $("#email").val().trim();
+	let password = $("#password").val().trim();
+	let birthDateString = $("#birthDate").val().trim();
+	let acceptTerms = $("#acceptTerms").is(":checked");
 	
-	var error = false;
+	let error = false;
 	
 	if (fullname === '') {
         $("#fullnameError").show();
