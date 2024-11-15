@@ -51,15 +51,15 @@
 				<div class="event-detail-top d-flex align-items-center">
 					<div class="user-container d-flex">
 						<div class="user-avatar">
-				        <img th:if="${eventOwner.profileImage != null}"
-				             th:src="${'../../' + eventOwner.profileImage}"
-				             alt="Imagen del organizador"
-				             class="profile-image">		        
-				        <div th:if="${eventOwner.profileImage == null}"
-				             class="avatar-circle bg-secondary-light text-light-bold"
-				             th:text="${eventOwner.fullname.substring(0, 1)}">
-				        </div>
-				    </div>
+					        <img th:if="${eventOwner.profileImage != null}"
+					             th:src="${'../../' + eventOwner.profileImage}"
+					             alt="Imagen del organizador"
+					             class="profile-image">		        
+					        <div th:if="${eventOwner.profileImage == null}"
+					             class="avatar-circle bg-secondary-light text-light-bold"
+					             th:text="${eventOwner.fullname.substring(0, 1)}">
+					        </div>
+				    	</div>
 						<div class="user-container-text d-flex flex-column text-body ms-3">
 							<p class="text-body d-flex" th:text="#{event.detail.owner.title}">Organizado por</p>
 							<p class="text-body-bold d-flex" th:text="${eventOwner.fullname}">Owner fullname</p>
@@ -111,6 +111,12 @@
 						th:text="#{event.detail.disjoin.button}"
 						th:attr="onclick='disjoinEvent(' + ${event.id} + ')'" >Desapuntarme	
 					</button>
+<!-- 					Button report event if no owner -->
+					<button class="btn btn-outline-danger btn-sm rounded-pill text-body reportEventBtn"
+						th:if="${user != null and user.id != eventOwner.id}"
+						data-bs-toggle="modal" data-bs-target="#confirmReportModal"
+						th:data-event-id="${event.id}" th:data-user-id="${user.id}"
+						th:text="#{event.detail.report.button}">Reportar evento</button>
 <!-- 					Button edit if owner -->
 					<a class="btn btn-outline-primary btn-sm rounded-pill text-body editEventBtn"
 					   th:if="${user != null and user.id == eventOwner.id}"
@@ -149,7 +155,7 @@
 					<p class="text-body" th:text="${event.description}">Event description</p>
 				</div>
 				<div class="comments-container mt-4 mb-5">
-					<h6 class="text-body-bold" th:text="#{event.comments.title}">Commentarios</h6>
+					<h6 class="text-body-bold" th:text="#{event.comments.title}">Comentarios</h6>
 					<form id="saveComment" th:action="@{/event/saveComment}" method="post" class="mb-1">
 						<div class="mb-2 mt-20-negative">
 						  	<div class="d-flex flex-row justify-content-end">
@@ -216,9 +222,9 @@
 				                <form id="saveReply" th:action="@{/event/saveComment}" method="post">
 				                    <div class="mb-2">
 					                    <div class="d-flex flex-row justify-content-end">
-										    <span id="charCountReply" class="text-muted" th:text="#{form.comment.caracteres.count}">0 / 255 caracteres</span>
+										    <span id="charCountReply" class="text-muted charCountReply" th:text="#{form.comment.caracteres.count}">0 / 255 caracteres</span>
 									    </div>
-				                        <textarea class="form-control rounded text-body" maxlength="255" name="reply" th:id="'reply-' + ${comment.id}" th:placeholder="#{form.placeholder.reply}"></textarea>
+				                        <textarea class="form-control rounded text-body reply" maxlength="255" name="reply" th:id="'reply-' + ${comment.id}" th:placeholder="#{form.placeholder.reply}"></textarea>
 				                        <div class="invalid-feedback" style="display: none;" th:id="'replyError-' + ${comment.id}">El campo respuesta no puede estar vacío</div>
 				                        <input type="hidden" name="parentId" th:value="${comment.id}"/>
 				                        <input type="hidden" name="eventId" th:value="${event.id}"/>
@@ -250,9 +256,10 @@
 							<p class="text-body d-flex" th:text="#{event.detail.owner.title}">Organizado por</p>
 							<p class="text-body-bold d-flex" th:text="${eventOwner.fullname}">Owner fullname</p>
 						</div>
-						<div class="d-flex align-items-center" th:if="${user != null and user.id != eventOwner.id}">
-							<i class="fa-solid fa-comments fa-xl me-2"
-							th:attr="onclick='openChat(' + ${eventOwner.id} + ')'"></i>
+						<div class="d-flex align-items-center" th:if="${user != null and eventOwner.allowChat}">
+							<a th:href="@{'/chat/open/' + ${eventOwner.id}}">
+								<i class="fa-solid fa-comments fa-xl me-2"></i>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -275,15 +282,56 @@
 								<p class="text-body d-flex" th:text="${participant.age} + ' años '">Participant age</p>
 								
 							</div>
-							<div class="d-flex align-items-center" th:if="${user != null and user.id != participant.id}">
-								<i class="fa-solid fa-comments fa-xl me-2"
-								th:attr="onclick='openChat(' + ${participant.id} + ')'"></i>
+							<div class="d-flex align-items-center" th:if="${user != null and participant.allowChat}">
+								<a th:href="@{'/chat/open/' + ${participant.id}}">
+							        <i class="fa-solid fa-comments fa-xl me-2"></i>
+							    </a>
 							</div>
 						</div>
 	           		</div>	
 				</div>
 			</div>
 		</div>
+		
+		<div class="modal fade" id="confirmReportModal" tabindex="-1" role="dialog"
+			aria-labelledby="titleReportModal" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+					<div class="modal-content">
+							<div class="form-content">
+								<form id="confirmReportForm">
+									<div class="modal-header">
+											<h5 class="modal-title" id="titleReportModal"
+													th:text="#{event.report.modal.title}"></h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+											</button>
+									</div>
+									<div class="modal-body" id="modalBody">
+											<div id="messagesModalConfirmReport">
+												<div th:replace="fragments/common/messages"></div>
+											</div>
+											<div class="form-group">
+												<label class="text-body" th:text="#{event.report.confirm}"></label>
+											</div>
+											<div class="backoffice-input-item">
+												<label for="reportReason" th:text="#{event.modal.report.reason}"></label>
+										        <select class="form-control rounded text-body" id="literal" name="literal">
+											    	<option th:text=#{form.placeholder.block.reason} th:value="''">Selecciona un literal...</option>
+													<option th:each="l : ${literals}" th:value="${l.id}" th:text="${l.literal}"/>
+											    </select>
+											</div>
+									</div>
+									<div class="modal-footer">
+											<button type="button" class="btn btn-empty cancelDataBtn"
+											data-bs-dismiss="modal" th:text="#{cancel}"></button>
+											<button type="button" class="btn btn-primary text-light rounded-pill confirmDataBtn"
+											data-bs-dismiss="modal" th:text="#{confirm}" id="modalConfirmReport"></button>
+									</div>
+								</form>
+							</div>
+					</div>
+				</div>
+			</div>
 		
 		
 	</main>

@@ -1,0 +1,516 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
+<link rel="stylesheet" type="text/css" th:href="@{/css/admin.css}" />
+</head>
+<body class="with-menu">
+	<header th:replace="fragments/common/header :: header"> </header>
+
+	<main>
+		<div id="messages">
+			<div th:replace="fragments/common/messages"></div>
+		</div>
+		<div id="messagesJs" style="display: none;">
+			<div th:replace="fragments/common/messagesJs"></div>
+		</div>
+
+		<h2 th:text="#{admin.title}"
+			class="text-body text-center section-title">Gestión</h2>
+		<div id="main-container" class="d-flex flex-row">
+
+			<div class="event-column-one">
+				<div class="tabs d-flex flex-column gap-3">
+					<div
+						class="btn btn-shadow text-body d-flex align-items-center py-2 usersListButton active"
+						onclick="showSection('usersList', this)">
+						<i class="fa-solid fa-users fa-xl" style="color: #D68FD6;"></i> <span
+							class="text-body text-start" th:text="#{admin.tab.users.list}">Listado
+							de usuarios</span>
+					</div>
+					<div
+						class="btn btn-shadow text-body d-flex align-items-center py-2 eventsListButton"
+						onclick="showSection('eventsList', this)">
+						<i class="fa-regular fa-calendar-check fa-2xl"
+							style="color: #D68FD6;"></i> <span class="text-body text-start"
+							th:text="#{admin.tab.events.list}">Listado de eventos</span>
+					</div>
+					<div
+						class="btn btn-shadow text-body d-flex align-items-center py-2 blocksListButton"
+						onclick="showSection('blocksList', this)">
+						<i class="fa-solid fa-ban fa-2xl" style="color: #D68FD6;"></i> <span
+							class="text-body text-start" th:text="#{admin.tab.blocks.list}">Usuarios
+							bloqueados</span>
+					</div>
+					<div
+						class="btn btn-shadow text-body d-flex align-items-center py-2 reportsListButton"
+						onclick="showSection('reportsList', this)">
+						<i class="fa-solid fa-clipboard fa-2xl" style="color: #D68FD6;"></i>
+						<span class="text-body text-start"
+							th:text="#{admin.tab.reports.list}">Eventos reportados</span>
+					</div>
+					<div
+						class="btn btn-shadow text-body d-flex align-items-center py-2 deregistrationsListButton"
+						onclick="showSection('deregistrationsList', this)">
+						<i class="fa-regular fa-square-minus fa-2xl"
+							style="color: #D68FD6;"></i> <span class="text-body text-start"
+							th:text="#{admin.tab.deregistrations.list}">Desregistros
+							no voluntarios</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="vertical-line"></div>
+
+			<div class="event-column-two">
+				<div id="usersList" class="content-section">
+					<div class="accordion" id="accordionActiveUsers">
+						<div class="accordion-item mb-2">
+							<h2 class="accordion-header">
+								<button class="accordion-button text-body-bold" type="button"
+									data-bs-toggle="collapse" data-bs-target="#bodyActiveUsers"
+									aria-expanded="true" aria-controls="bodyActiveUsers"
+									th:text="#{accordion.title.users.active}">Usuarios
+									activos</button>
+							</h2>
+							<div id="bodyActiveUsers"
+								class="accordion-collapse collapse show"
+								data-bs-parent="#accordionActiveUsers">
+								<div class="accordion-body d-flex flex-column gap-4">
+									<div th:each="user : ${activeUsers}">
+										<div
+											class="card d-flex flex-row justify-content-between align-items-center">
+											<div class="cardData d-flex gap-3">
+												<div class="user-avatar">
+													<img th:if="${user.profileImage != null}"
+														th:src="${'../../' + user.profileImage}"
+														alt="Imagen del usuario del comentario"
+														class="profile-image sm">
+													<div th:if="${user.profileImage == null}"
+														class="avatar-circle sm bg-secondary-light text-light-bold"
+														th:text="${user.fullname.substring(0, 1)}"></div>
+												</div>
+												<div
+													class="personalData d-flex flex-column justify-content-evenly">
+													<h6 class="text-body" th:text="${user.fullname}">Nombre
+														y apellidos</h6>
+													<p class="card-text" th:text="${user.email}">Email</p>
+
+												</div>
+												<div
+													class="personalData d-flex flex-column justify-content-evenly">
+													<p class="card-text" th:text="${user.age} + ' años '">Edad
+														usuario</p>
+													<p class="card-text"
+														th:text="'Fecha de registro: ' + ${#dates.format(user.creationDate, 'dd/MM/yyyy')}">Fecha
+														registro</p>
+												</div>
+											</div>
+											<div class="cardActions d-flex justify-content-end gap-2">
+												<a th:href="@{'/user/inactive/' + ${user.id}}"
+													class="btn btn-primary btn-sm rounded-circle"
+													data-toggle="tooltip" data-placement="bottom"
+													th:title="#{admin.user.inactive.tooltip}"> <i
+													class="fa-solid fa-circle-minus fa-lg"
+													style="color: #ffffff;"></i>
+												</a> <a th:href="@{'/user/delete/' + ${user.id}}"
+													class="btn btn-danger btn-sm rounded-circle"
+													data-toggle="tooltip" data-placement="bottom"
+													th:title="#{admin.user.delete.tooltip}"> <i
+													class="fa-regular fa-trash-can fa-lg"
+													style="color: #ffffff;"></i>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion" id="accordionInactiveUsers">
+						<div class="accordion-item mb-2">
+							<h2 class="accordion-header">
+								<button class="accordion-button text-body-bold collapsed"
+									type="button" data-bs-toggle="collapse"
+									data-bs-target="#bodyInactiveUsers" aria-expanded="false"
+									aria-controls="bodyInactiveUsers"
+									th:text="#{accordion.title.users.inactive}">Usuarios
+									inactivos</button>
+							</h2>
+							<div id="bodyInactiveUsers" class="accordion-collapse collapse"
+								data-bs-parent="#accordionInactiveUsers">
+								<div class="accordion-body d-flex flex-column gap-4">
+									<div th:if="${inactiveUsers.size() < 1}">
+										<h6 class="text-body"
+											th:text="#{accordion.text.inactiveUsers.empty}"></h6>
+									</div>
+									<div th:if="${inactiveUsers.size() > 0}"
+										th:each="user : ${inactiveUsers}">
+										<div
+											class="card d-flex flex-row justify-content-between align-items-center">
+											<div class="cardData d-flex gap-3">
+												<div class="user-avatar">
+													<img th:if="${user.profileImage != null}"
+														th:src="${'../../' + user.profileImage}"
+														alt="Imagen del usuario del comentario"
+														class="profile-image sm">
+													<div th:if="${user.profileImage == null}"
+														class="avatar-circle sm bg-secondary-light text-light-bold"
+														th:text="${user.fullname.substring(0, 1)}"></div>
+												</div>
+												<div
+													class="personalData d-flex flex-column justify-content-evenly">
+													<h6 class="text-body" th:text="${user.fullname}">Nombre
+														y apellidos</h6>
+													<p class="card-text" th:text="${user.email}">Email</p>
+
+												</div>
+												<div
+													class="personalData d-flex flex-column justify-content-evenly">
+													<p class="card-text" th:text="${user.age} + ' años '">Edad
+														usuario</p>
+													<p class="card-text"
+														th:text="'Fecha de registro: ' + ${#dates.format(user.creationDate, 'dd/MM/yyyy')}">Fecha
+														registro</p>
+												</div>
+											</div>
+											<div class="cardActions d-flex justify-content-end gap-2">
+												<a th:href="@{'/user/active/' + ${user.id}}"
+													class="btn btn-secondary btn-sm rounded-circle"
+													data-toggle="tooltip" data-placement="bottom"
+													th:title="#{admin.user.active.tooltip}"> <i
+													class="fa-solid fa-circle-plus fa-lg"
+													style="color: #ffffff;"></i>
+												</a> <a th:href="@{'/user/delete/' + ${user.id}}"
+													class="btn btn-danger btn-sm rounded-circle"
+													data-toggle="tooltip" data-placement="bottom"
+													th:title="#{admin.user.delete.tooltip}"> <i
+													class="fa-regular fa-trash-can fa-lg"
+													style="color: #ffffff;"></i>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="eventsList" class="content-section" style="display: none;">
+					<div class="accordion" id="accordionFutureEvents">
+						<div class="accordion-item mb-2">
+							<h2 class="accordion-header">
+								<button class="accordion-button text-body-bold" type="button"
+									data-bs-toggle="collapse" data-bs-target="#bodyFutureEvents"
+									aria-expanded="true" aria-controls="bodyFutureEvents"
+									th:text="#{accordion.title.events.future}">Eventos
+									futuros</button>
+							</h2>
+							<div id="bodyFutureEvents"
+								class="accordion-collapse collapse show"
+								data-bs-parent="#accordionFutureEvents">
+								<div class="accordion-body d-flex flex-column gap-4">
+									<div th:if="${futureEvents.size() < 1}">
+										<h6 class="text-body"
+											th:text="#{accordion.text.futureEvents.empty}"></h6>
+									</div>
+									<div th:if="${futureEvents.size() > 0}"
+										th:each="event : ${futureEvents}">
+										<div
+											class="card d-flex flex-row justify-content-between align-items-center">
+											<div class="cardDataEvent d-flex gap-3">
+												<img th:src="${'../../' + event.image}"
+													alt="Imagen del evento">
+												<div
+													class="eventDataLarge d-flex flex-column justify-content-evenly">
+													<h6 class="card-title">
+														<a class="card-title"
+															th:href="@{'/event/detail/' + ${event.id}}"
+															th:text="${event.title}">Event title</a>
+													</h6>
+													<div class="d-flex flex-row justify-content-between">
+														<div class="event-detail d-flex pt-3 align-items-center">
+															<i class="fas fa-calendar-alt fa-lg me-2"></i>
+															<p class="card-text"
+																th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">Event
+																date</p>
+														</div>
+														<div class="event-detail d-flex pt-3 align-items-center">
+															<i class="fa-solid fa-location-dot fa-lg me-2"></i>
+															<p class="card-text" th:text="${event.city}">Localidad</p>
+														</div>
+													</div>
+												</div>
+												<div
+													class="eventDataSmall d-flex flex-column justify-content-around">
+													<div
+														class="d-flex flex-row flex-start align-items-center gap-2">
+														<div class="user-avatar-sm">
+															<img th:if="${event.eventOwner.profileImage != null}"
+																th:src="${'../../' + event.eventOwner.profileImage}"
+																alt="Imagen del creador del evento"
+																class="profile-image sm">
+															<div th:if="${event.eventOwner.profileImage == null}"
+																class="avatar-circle sm bg-secondary-light text-light-bold"
+																th:text="${event.eventOwner.fullname.substring(0, 1)}">
+															</div>
+														</div>
+														<div class="card-text"
+															th:text="${event.eventOwner.fullname}">Event
+															creator fullname</div>
+													</div>
+													<p class="card-text"
+														th:text="'Categoría: ' + ${event.category.category}">Categoría</p>
+												</div>
+											</div>
+											<div
+												class="cardActionsEvent d-flex justify-content-end gap-2">
+												<a th:href="@{'/event/delete/' + ${event.id}}"
+													class="btn btn-danger btn-sm rounded-circle"
+													data-toggle="tooltip" data-placement="bottom"
+													th:title="#{admin.event.delete.tooltip}"> <i
+													class="fa-regular fa-trash-can fa-lg"
+													style="color: #ffffff;"></i>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion" id="accordionPastEvents">
+						<div class="accordion-item mb-2">
+							<h2 class="accordion-header">
+								<button class="accordion-button text-body-bold collapsed"
+									type="button" data-bs-toggle="collapse"
+									data-bs-target="#bodyPastEvents" aria-expanded="false"
+									aria-controls="bodyPastEvents"
+									th:text="#{accordion.title.events.past}">Eventos
+									pasados</button>
+							</h2>
+							<div id="bodyPastEvents" class="accordion-collapse collapse"
+								data-bs-parent="#accordionPastEvents">
+								<div class="accordion-body d-flex flex-column gap-4">
+									<div th:if="${pastEvents.size() < 1}">
+										<h6 class="text-body"
+											th:text="#{accordion.text.pastEvents.empty}"></h6>
+									</div>
+									<div th:if="${pastEvents.size() > 0}"
+										th:each="event : ${pastEvents}">
+										<div
+											class="card d-flex flex-row justify-content-between align-items-center">
+											<div class="cardDataEvent d-flex gap-3">
+												<img th:src="${'../../' + event.image}"
+													alt="Imagen del evento">
+												<div
+													class="eventDataLarge d-flex flex-column justify-content-evenly">
+													<h6 class="card-title">
+														<a class="card-title"
+															th:href="@{'/event/detail/' + ${event.id}}"
+															th:text="${event.title}">Event title</a>
+													</h6>
+													<div class="d-flex flex-row justify-content-between">
+														<div class="event-detail d-flex pt-3 align-items-center">
+															<i class="fas fa-calendar-alt fa-lg me-2"></i>
+															<p class="card-text"
+																th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">Event
+																date</p>
+														</div>
+														<div class="event-detail d-flex pt-3 align-items-center">
+															<i class="fa-solid fa-location-dot fa-lg me-2"></i>
+															<p class="card-text" th:text="${event.city}">Localidad</p>
+														</div>
+													</div>
+												</div>
+												<div
+													class="eventDataSmall d-flex flex-column justify-content-around">
+													<div
+														class="d-flex flex-row flex-start align-items-center gap-2">
+														<div class="user-avatar-sm">
+															<img th:if="${event.eventOwner.profileImage != null}"
+																th:src="${'../../' + event.eventOwner.profileImage}"
+																alt="Imagen del creador del evento"
+																class="profile-image sm">
+															<div th:if="${event.eventOwner.profileImage == null}"
+																class="avatar-circle sm bg-secondary-light text-light-bold"
+																th:text="${event.eventOwner.fullname.substring(0, 1)}">
+															</div>
+														</div>
+														<div class="card-text"
+															th:text="${event.eventOwner.fullname}">Event
+															creator fullname</div>
+													</div>
+													<p class="card-text"
+														th:text="'Categoría: ' + ${event.category.category}">Categoría</p>
+												</div>
+											</div>
+											<div
+												class="cardActionsEvent d-flex justify-content-end gap-2">
+												<a th:href="@{'/event/delete/' + ${event.id}}"
+													class="btn btn-danger btn-sm rounded-circle"
+													data-toggle="tooltip" data-placement="bottom"
+													th:title="#{admin.event.delete.tooltip}"> <i
+													class="fa-regular fa-trash-can fa-lg"
+													style="color: #ffffff;"></i>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="blocksList" class="content-section" style="display: none;">
+					<div th:if="${blocks.size() < 1}">
+						<h6 class="text-body" th:text="#{accordion.text.blocks.empty}"></h6>
+					</div>
+					<div class="d-flex flex-column gap-4">
+						<div th:if="${blocks.size() > 0}" th:each="block : ${blocks}">
+							<div
+								class="card d-flex flex-row justify-content-between align-items-center">
+								<div class="cardData d-flex gap-3">
+									<div class="user-avatar">
+										<img th:if="${block.blocked.profileImage != null}"
+											th:src="${'../../' + block.blocked.profileImage}"
+											alt="Imagen del usuario bloqueado" class="profile-image sm">
+										<div th:if="${block.blocked.profileImage == null}"
+											class="avatar-circle sm bg-secondary-light text-light-bold"
+											th:text="${block.blocked.fullname.substring(0, 1)}"></div>
+									</div>
+									<div
+										class="personalData d-flex flex-column justify-content-evenly">
+										<h6 class="text-body" th:text="${block.blocked.fullname}">Nombre
+											y apellidos de usuario bloqueado</h6>
+										<p class="card-text"
+											th:text="'Reportado por ' + ${block.reporter.fullname}">Nombre
+											y apellidos de usuario que reporta</p>
+									</div>
+									<div
+										class="personalData d-flex flex-column justify-content-center">
+										<p class="card-text">Motivo del bloqueo:</p>
+										<p class="card-text" th:text="${block.literal.literal}">Motivo
+											bloqueo</p>
+									</div>
+								</div>
+								<div class="cardActions d-flex justify-content-end gap-2">
+									<a th:href="@{'/user/inactive/' + ${block.blocked.id}}"
+										class="btn btn-danger btn-sm rounded-circle"
+										data-toggle="tooltip" data-placement="bottom"
+										th:title="#{admin.user.inactive.tooltip}"> <i
+										class="fa-solid fa-circle-minus fa-lg" style="color: #ffffff;"></i>
+									</a> <a th:href="@{'/user/removeBlock/' + ${block.id}}"
+										class="btn btn-primary btn-sm rounded-circle"
+										data-toggle="tooltip" data-placement="bottom"
+										th:title="#{admin.block.delete.tooltip}"> <i
+										class="fa-solid fa-circle-check fa-lg" style="color: #ffffff;"></i>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="reportsList" class="content-section" style="display: none;">
+					<div th:if="${reports.size() < 1}">
+						<h6 class="text-body" th:text="#{accordion.text.reports.empty}"></h6>
+					</div>
+					<div class="d-flex flex-column gap-4">
+						<div th:if="${reports.size() > 0}" th:each="report : ${reports}">
+							<div
+								class="card d-flex flex-row justify-content-between align-items-center">
+								<div class="cardData d-flex gap-3">
+									<img th:src="${'../../' + report.event.image}"
+										alt="Imagen del evento">
+									<div
+										class="personalData d-flex flex-column justify-content-evenly">
+										<h6 class="card-title">
+											<a class="card-title"
+												th:href="@{'/event/detail/' + ${report.event.id}}"
+												th:text="${report.event.title}">Event title</a>
+										</h6>
+										<p class="card-text"
+											th:text="'Reportado por ' + ${report.reporter.fullname}">Nombre
+											y apellidos de usuario que reporta</p>
+									</div>
+									<div
+										class="personalData d-flex flex-column justify-content-center">
+										<p class="card-text">Motivo del reporte:</p>
+										<p class="card-text" th:text="${report.literal.literal}">Motivo
+											reporte</p>
+									</div>
+								</div>
+								<div class="cardActions d-flex justify-content-end gap-2">
+									<a th:href="@{'/event/removeReport/' + ${report.id}}"
+										class="btn btn-primary btn-sm rounded-circle"
+										data-toggle="tooltip" data-placement="bottom"
+										th:title="#{admin.event.deleteReport.tooltip}"> <i
+										class="fa-solid fa-circle-minus fa-lg" style="color: #ffffff;"></i>
+									</a> <a th:href="@{'/event/delete/' + ${report.event.id}}"
+										class="btn btn-danger btn-sm rounded-circle"
+										data-toggle="tooltip" data-placement="bottom"
+										th:title="#{admin.event.delete.tooltip}"> <i
+										class="fa-regular fa-trash-can fa-lg" style="color: #ffffff;"></i>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="deregistrationsList" class="content-section"
+					style="display: none;">
+					<div th:if="${deregistrations.size() < 1}">
+						<h6 class="text-body"
+							th:text="#{accordion.text.deregistrations.empty}"></h6>
+					</div>
+					<div class="d-flex flex-column gap-4">
+						<div th:if="${deregistrations.size() > 0}"
+							th:each="deregistration : ${deregistrations}">
+							<div
+								class="card d-flex flex-row justify-content-between align-items-center">
+								<div class="cardData d-flex gap-3">
+									<div class="user-avatar">
+										<img th:if="${deregistration.user.profileImage != null}"
+											th:src="${'../../' + deregistration.user.profileImage}"
+											alt="Imagen del usuario desregistrado"
+											class="profile-image sm">
+										<div th:if="${deregistration.user.profileImage == null}"
+											class="avatar-circle sm bg-secondary-light text-light-bold"
+											th:text="${deregistration.user.fullname.substring(0, 1)}">
+										</div>
+									</div>
+									<div
+										class="personalData d-flex flex-column justify-content-evenly">
+										<h6 class="text-body"
+											th:text="${deregistration.user.fullname}">Nombre y
+											apellidos de usuario desregistrado</h6>
+										<p class="card-text"
+											th:text="'Evento: ' + ${deregistration.event.title}">Título
+											del evento</p>
+									</div>
+									<div
+										class="personalData d-flex flex-column justify-content-center">
+										<p class="card-text">Motivo del desregistro:</p>
+										<p class="card-text"
+											th:text="${deregistration.literal.literal}">Motivo
+											desregistro</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<footer th:replace="fragments/common/footer :: footer"></footer>
+
+	<script th:inline="javascript">
+		
+	</script>
+
+	<script type="text/javascript" src="../../../static/js/admin.js"
+		th:src="@{/js/profile.js}"></script>
+</body>
+</html>

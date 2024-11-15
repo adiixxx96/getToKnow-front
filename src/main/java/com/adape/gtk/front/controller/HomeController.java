@@ -83,7 +83,7 @@ public class HomeController {
     							)).build())
     			.showParameters(List.of("users.user"))
     			.page(Page.builder().pageNo(0).pageSize(6).build())
-    			.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build()))
+    			.sorting(List.of(Sorting.builder().field("eventDate").order(Order.ASC).build()))
     			.build();
         
         ResponseMessage rEvent = eventclient.get(filterEvents, 0);

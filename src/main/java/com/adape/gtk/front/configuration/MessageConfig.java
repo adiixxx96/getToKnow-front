@@ -59,15 +59,4 @@ public class MessageConfig implements WebMvcConfigurer{
 	    return messageSource;
 	}
 	
-//	@Override
-//	public void addInterceptors(InterceptorRegistry registry) {
-//	    registry.addInterceptor(localeChangeInterceptor());
-//	}
-//	@Bean
-//	public LocalValidatorFactoryBean getValidator() {
-//	    LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
-//	    bean.setValidationMessageSource(messageSource());
-//	    return bean;
-//	}
-	
 }

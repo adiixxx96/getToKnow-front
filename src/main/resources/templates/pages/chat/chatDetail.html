@@ -1,0 +1,100 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
+<link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" />
+</head>
+<body class="with-menu">
+	<header th:replace="fragments/common/header :: header"> </header>
+
+	<main>
+		<div id="messages">
+			<div th:replace="fragments/common/messages"></div>
+		</div>
+		<div id="messagesJs" style="display: none;">
+			<div th:replace="fragments/common/messagesJs"></div>
+		</div>
+
+		<div id="main-container-chat" class="d-flex flex-column">
+			<div
+				class="title-section d-flex flex-row align-items-center justify-content-start gap-5">
+				<div class="d-flex align-items-center">
+					<div class="user-avatar-chat">
+						<img th:if="${chat.userTo.profileImage != null}"
+							th:src="${'../../' + chat.userTo.profileImage}"
+							alt="Imagen del organizador" class="profile-image">
+						<div th:if="${chat.userTo.profileImage == null}"
+							class="avatar-circle bg-secondary-light text-light-bold"
+							th:text="${chat.userTo.fullname.substring(0, 1)}"></div>
+					</div>
+					<h5 th:if="${chat.status == null and user.id == chat.user2.id}" class="text-body"
+						th:text="'Solicitud de chat de ' + ${chat.userTo.fullname}">Chat con
+						usuario</h5>
+					<h5 th:if="${chat.status == null and user.id == chat.user1.id}" class="text-body"
+						th:text="'Solicitud de chat a ' + ${chat.userTo.fullname}">Chat con
+						usuario</h5>
+					<h5 th:if="${chat.status != null}" class="text-body"
+						th:text="'Chat con ' + ${chat.userTo.fullname}">Chat con
+						usuario</h5>
+				</div>
+				<div th:if="${chat.status == null and user.id == chat.user2.id}"
+					class="cardActions d-flex gap-3">
+					<a
+						class="btn btn-outline-primary btn-sm rounded-pill text-body acceptChatBtn d-flex align-items-center"
+						th:data-user-id="${chat.id}"
+						th:href="@{'/chat/accept/' + ${chat.id}}"
+						onclick="disableLink(this)"> <i
+						class="fa-solid fa-check fa-xl me-2"></i> <span
+						th:text="#{chat.card.acceptChat.button}">Aceptar</span>
+					</a> <a
+						class="btn btn-outline-danger btn-sm rounded-pill text-body rejectChatBtn d-flex align-items-center"
+						th:data-user-id="${chat.id}"
+						th:href="@{'/chat/reject/' + ${chat.id}}"
+						onclick="disableLink(this)"> <i
+						class="fa-solid fa-xmark fa-xl me-2"></i> <span
+						th:text="#{chat.card.rejectChat.button}">Rechazar</span>
+					</a>
+				</div>
+			</div>
+			<div class="chat-section">
+				<div class="messages-container" id="message-container">
+					<div th:if="${chat.messages}" th:each="message : ${chat.messages}">
+						<div th:id="'message-' + ${message.id}" class="message-bubble-container"
+							th:classappend="${message.user.id == user.id} ? 'own-message' : 'other-message'">
+							<div class="message-bubble">
+								<p th:text="${message.message}"></p>
+								<div class="message-info">
+									<span class="creation-date"
+										th:text="${#dates.format(message.creationDate, 'dd/MM/yyyy HH:mm')}"></span>
+									<i th:if="${message.user.id == user.id}"
+										th:classappend="${message.isRead ? 'fa-solid fa-check-double read' : 'fa-solid fa-check unread'}"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex flex-column align-items-center">
+					<textarea class="form-control rounded text-body" id="message"
+						name="message" th:data-chat-id="${chat.id}"
+						th:placeholder="#{chat.write.message}"></textarea>
+					<button
+						class="btn btn-secondary btn-sm rounded-pill text-light publishMessageBtn"
+						type="button" id="sendButton" th:text="#{chat.message.send}">Enviar
+					</button>
+				</div>
+			</div>
+		</div>
+
+	</main>
+
+	<footer th:replace="fragments/common/footer :: footer"></footer>
+
+	<script th:inline="javascript">
+		var userId = /*[[${user != null ? user.id : 0}]]*/0;
+		var chatId = /*[[${chat != null ? chat.id : 0}]]*/0;
+		var chatStatus = /*[[${chat.status}]]*/-1;
+	</script>
+
+	<script type="text/javascript" src="../../../static/js/chat.js"
+		th:src="@{/js/chat.js}"></script>
+</body>
+</html>

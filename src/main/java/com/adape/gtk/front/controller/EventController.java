@@ -32,8 +32,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.adape.gtk.core.client.beans.BlockByUserDTO;
 import com.adape.gtk.core.client.beans.CategoryDTO;
 import com.adape.gtk.core.client.beans.CategoryIconMapper;
+import com.adape.gtk.core.client.beans.ChatDTO;
 import com.adape.gtk.core.client.beans.CommentDTO;
 import com.adape.gtk.core.client.beans.EventDTO;
 import com.adape.gtk.core.client.beans.Filter;
@@ -42,10 +44,13 @@ import com.adape.gtk.core.client.beans.FilterElements;
 import com.adape.gtk.core.client.beans.FilterElements.FilterType;
 import com.adape.gtk.core.client.beans.FilterElements.OperatorType;
 import com.adape.gtk.core.client.beans.GroupFilter;
+import com.adape.gtk.core.client.beans.LiteralDTO;
+import com.adape.gtk.core.client.beans.LiteralTypeEnum;
 import com.adape.gtk.core.client.beans.GroupFilter.GroupFilterBuilder;
 import com.adape.gtk.core.client.beans.GroupFilter.Operator;
 import com.adape.gtk.core.client.beans.Page;
 import com.adape.gtk.core.client.beans.ProvinceEnum;
+import com.adape.gtk.core.client.beans.ReportByEventDTO;
 import com.adape.gtk.core.client.beans.Response;
 import com.adape.gtk.core.client.beans.ResponseMessage;
 import com.adape.gtk.core.client.beans.Sorting;
@@ -54,9 +59,12 @@ import com.adape.gtk.core.client.beans.Sorting.Order;
 import com.adape.gtk.core.client.beans.TagByEventDTO;
 import com.adape.gtk.core.client.beans.TagDTO;
 import com.adape.gtk.core.client.beans.UserByEventDTO;
+import com.adape.gtk.core.client.service.BlockByUserIntService;
 import com.adape.gtk.core.client.service.CategoryIntService;
 import com.adape.gtk.core.client.service.CommentIntService;
 import com.adape.gtk.core.client.service.EventIntService;
+import com.adape.gtk.core.client.service.LiteralIntService;
+import com.adape.gtk.core.client.service.ReportByEventIntService;
 import com.adape.gtk.core.client.service.TagIntService;
 import com.adape.gtk.front.beans.CommentData;
 import com.adape.gtk.front.beans.EventData;
@@ -80,6 +88,13 @@ public class EventController {
 	private EventIntService eventclient;
 	@Autowired
 	private CommentIntService commentclient;
+	@Autowired
+	private BlockByUserIntService blockclient;
+	@Autowired
+	private LiteralIntService literalclient;
+	@Autowired
+	private ReportByEventIntService reportclient;
+
 
 	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
 	public String eventController(@RequestParam(value = "category", required = false) Integer categoryId, Model model,
@@ -501,7 +516,7 @@ public class EventController {
 
 		UserDTO user = (UserDTO) session.getAttribute("user");
 		if (user == null) {
-			// User not logued -> no permission to publish comment
+			// User not logued -> no permission to 
 			return "redirect:/event/detail/" + commentData.getEventId();
 		}
 
@@ -556,6 +571,12 @@ public class EventController {
 			Response<EventDTO> res = (Response<EventDTO>) response.getMessage();
 			event = res.getResults().get(0);
 		}
+		
+		if (event == null) {
+			log.error("The event does not exist");
+			return "redirect:/custom-error";
+		}
+		
 		model.addAttribute("event", event);
 
 		// Obtain province name
@@ -617,6 +638,128 @@ public class EventController {
 		for (List<CommentDTO> replies : repliesMap.values()) {
 			replies.sort((a, b) -> a.getCreationDate().compareTo(b.getCreationDate()));
 		}
+		
+		//Check if it is allowed to have openChatButton for every user
+		
+			//Get blocks by user
+		List<BlockByUserDTO> blocks = new ArrayList<>();
+		
+		Filter filterBlocks = Filter.builder()
+    			.groupFilter(GroupFilter.builder()
+    					.operator(GroupFilter.Operator.AND)
+    					.groupFilter(Arrays.asList(GroupFilter.builder()
+    								.operator(GroupFilter.Operator.OR)
+    								.filterElements(Arrays.asList(
+    										FilterElements.builder()
+			    							.key("blocked.id")
+			    							.value(user.getId())
+			    							.type(FilterElements.FilterType.INTEGER)
+			    							.operator(FilterElements.OperatorType.EQUALS).build(),
+		    								FilterElements.builder()
+			    							.key("reporter.id")
+			    							.value(user.getId())
+			    							.type(FilterElements.FilterType.INTEGER)
+			    							.operator(FilterElements.OperatorType.EQUALS).build()))
+		    						.build()))
+    					.build())
+    			.showParameters(List.of("blocked", "reporter"))
+    			.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
+    			.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build()))
+    			.build();
+		
+		ResponseMessage responseBlock = blockclient.get(filterBlocks, user.getId());
+		
+		if (responseBlock.isOK()) {
+			Response<BlockByUserDTO> resp = (Response<BlockByUserDTO>) responseBlock.getMessage();
+			blocks = resp.getResults();
+		}
+		
+		//Check first eventOwner
+		if (eventOwner.getId().equals(user.getId())) {
+			eventOwner.setAllowChat(false);
+	
+		} else {
+			if (!blocks.isEmpty()) {
+				boolean blockFound = false;
+				for (BlockByUserDTO block : blocks) {
+					if ((block.getBlocked().getId().equals(eventOwner.getId()) && block.getReporter().getId().equals(user.getId()))
+							|| (block.getBlocked().getId().equals(user.getId()) && block.getReporter().getId().equals(eventOwner.getId()))) {
+						blockFound = true;
+						break;
+					}
+				}
+				if (blockFound) {
+					eventOwner.setAllowChat(false);
+				} else {
+					eventOwner.setAllowChat(true);
+				}
+			} else {
+				eventOwner.setAllowChat(true);
+			}	
+		}
+		
+		//Check eventParticipants
+		for (UserDTO eventParticipant : eventParticipants) {
+			if (eventParticipant.getId().equals(user.getId())) {
+				eventParticipant.setAllowChat(false);
+		
+			} else {
+				if (!blocks.isEmpty()) {
+					boolean blockFound = false;
+					for (BlockByUserDTO block : blocks) {
+						if ((block.getBlocked().getId().equals(eventParticipant.getId()) && block.getReporter().getId().equals(user.getId()))
+								|| (block.getBlocked().getId().equals(user.getId()) && block.getReporter().getId().equals(eventParticipant.getId()))) {
+							blockFound = true;
+							break;
+						}
+					}
+					if (blockFound) {
+						eventParticipant.setAllowChat(false);
+					} else {
+						eventParticipant.setAllowChat(true);
+					}
+				} else {
+					eventParticipant.setAllowChat(true);
+				}	
+			}
+		}
+		
+		//Get literals for event reports
+				Filter filterLiterals = Filter.builder()
+		    			.groupFilter(GroupFilter.builder()
+		    					.operator(GroupFilter.Operator.AND)
+		    					.groupFilter(Arrays.asList(GroupFilter.builder()
+		    								.operator(GroupFilter.Operator.AND)
+		    								.filterElements(Arrays.asList(
+		    										FilterElements.builder()
+					    							.key("active")
+					    							.value(true)
+					    							.type(FilterElements.FilterType.BOOLEAN)
+					    							.operator(FilterElements.OperatorType.EQUALS).build(),
+				    								FilterElements.builder()
+					    							.key("type")
+					    							.value(LiteralTypeEnum.REPORT.getType())
+					    							.type(FilterElements.FilterType.INTEGER)
+					    							.operator(FilterElements.OperatorType.EQUALS).build()))
+				    						.build()))
+		    					.build())
+		    			.showParameters(List.of(""))
+		    			.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
+		    			.sorting(List.of(Sorting.builder().field("id").order(Order.ASC).build()))
+		    			.build();
+				
+				ResponseMessage responseLiteral = literalclient.get(filterLiterals, user.getId());
+				
+				List<LiteralDTO> literals = new ArrayList<>();
+				if (responseLiteral.isOK()) {
+					Response<LiteralDTO> resp = (Response<LiteralDTO>) responseLiteral.getMessage();
+					literals = resp.getResults();
+				} else {
+					log.error("Error getting literals");
+					return "pages/event/eventDetail";
+				}
+				
+				model.addAttribute("literals", literals);
 
 		model.addAttribute("joinedUser", joinedUser);
 		model.addAttribute("eventOwner", eventOwner);
@@ -867,14 +1010,117 @@ public class EventController {
 		
 		return "pages/event/eventCreate";
 	}
+	
+	@SuppressWarnings("unchecked")
+	@GetMapping("/delete/{id}")
+	public String deleteEvent(@PathVariable("id") Integer id, RedirectAttributes attr, HttpSession session, HttpServletRequest request) {
+
+		UserDTO user = (UserDTO) session.getAttribute("user");
+		
+		//Get event for security to check if user of session is the owner
+		FilterBuilder filter = Filter.builder();
+		filter.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build());
+		filter.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build()));
+		filter.showParameters(List.of("users.user"));
+		filter.groupFilter(GroupFilter.builder().operator(GroupFilter.Operator.AND)
+				.filterElements(Arrays.asList(FilterElements.builder().key("id").value(id)
+						.type(FilterElements.FilterType.INTEGER).operator(FilterElements.OperatorType.EQUALS).build()))
+				.build());
+		ResponseMessage response = eventclient.get(filter.build(), 0);
+		EventDTO event = null;
+		if (response.isOK()) {
+			Response<EventDTO> res = (Response<EventDTO>) response.getMessage();
+			event = res.getResults().get(0);
+		}
+		
+		UserDTO eventOwner = null;
+		for (UserByEventDTO ube : event.getUsers()) {
+			if (ube.getOwner()) {
+				eventOwner = ube.getUser();
+				break;
+			}
+		}	
+		if (user == null || !user.getId().equals(eventOwner.getId())) {
+			log.error("User has no permission to delete event");
+			return "redirect:/custom-error";
+		}
+		
+		ResponseMessage resp = eventclient.delete(List.of(id), user.getId());
+		if (!resp.isOK()) {
+			attr.addFlashAttribute("error", Utils.message("event.delete.error", resp.getMessage().toString()));
+		} else {
+			attr.addFlashAttribute("success", Utils.message("event.delete.ok"));
+		}
+		
+		String referer = request.getHeader("Referer");
+	    if (referer != null && referer.contains("/user/profile")) {
+	        return "redirect:/user/profile/";
+	    } else {
+	        return "redirect:/user/admin/";
+	    }
+	}
+	
+	@SuppressWarnings("unchecked")
+	@PostMapping("/reportEvent")
+	public ResponseEntity<?> reportEvent(@RequestParam Integer eventId, @RequestParam Integer userId, 
+			@RequestParam String reason, HttpSession session) {
+	    
+		UserDTO user = (UserDTO) session.getAttribute("user");
+		if (user == null) {
+			log.error("The user has no permission to report event");
+			return ResponseEntity.internalServerError().body("User has no permission to report event");
+		}
+		
+		//Create report		
+		ReportByEventDTO report = ReportByEventDTO.builder().event(EventDTO.builder().id(eventId).build())
+				.reporter(UserDTO.builder().id(userId).build())
+				.literal(LiteralDTO.builder().id(Integer.parseInt(reason)).build())
+				.build();
+		
+		ResponseMessage respReport = reportclient.create(report, user.getId());
+		if (!respReport.isOK()) {
+			return ResponseEntity.internalServerError().body("Error when creating report");
+		}
+		
+		return ResponseEntity.ok("Report event ok");
+	    
+	}
+	
+	@SuppressWarnings("unchecked")
+	@GetMapping("/removeReport/{id}")
+	public String removeBlock(@PathVariable("id") Integer reportId, RedirectAttributes attr, HttpSession session) {
+
+		UserDTO currentUser = (UserDTO) session.getAttribute("user");
+		if (currentUser == null || !currentUser.getRole()) {
+			log.error("User has no permission to remove reports");
+			return "redirect:/custom-error";
+		}
+
+		// Remove reports
+		List<Integer> reportIds = new ArrayList<>();
+		reportIds.add(reportId);
+
+		ResponseMessage resp = reportclient.delete(reportIds, currentUser.getId());
+
+		if (!resp.isOK()) {
+			attr.addFlashAttribute("error", Utils.message("report.delete.error"));
+		} else {
+			attr.addFlashAttribute("success", Utils.message("report.delete.ok"));
+		}
+
+		return "redirect:/user/admin/";
+	}
 
 	private EventDTO parseEventDataToEvent(EventData eventData, UserDTO user) {
 
 		EventDTO event = new EventDTO();
-
+		EventDTO oldEvent = null;
 		//Id if edit
 		if (eventData.getEventId() != null) {
 			event.setId(eventData.getEventId());
+			
+			//Get old event finding by id
+			oldEvent = getEventById(event.getId());
 		}	
 		
 		// Title
@@ -912,8 +1158,12 @@ public class EventController {
 
 		// Creation date
 		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-		event.setCreationDate(currentTimestamp);
-
+		if (oldEvent != null) {
+			event.setCreationDate(oldEvent.getCreationDate());
+		} else {
+			event.setCreationDate(currentTimestamp);
+		}
+		
 		// Max number of participants
 		event.setMaxParticipants(eventData.getMaxParticipants());
 
@@ -982,8 +1232,10 @@ public class EventController {
 		}			
 		//Event
 		comment.setEvent(EventDTO.builder().id(commentData.getEventId()).build());
+		
 		//User
 		comment.setUser(user);
+		
 		//Parent comment
 		if (commentData.getParentId() != null) {
 			comment.setParent(CommentDTO.builder().id(commentData.getParentId()).build());
@@ -993,27 +1245,6 @@ public class EventController {
 		comment.setCreationDate(currentTimestamp);
 
 		return comment;
-	}
-
-	private EventDTO getEventRecentlyCreated(int userId) {
-
-		EventDTO event = null;
-
-		Filter filter = Filter.builder().groupFilter(GroupFilter.builder().operator(GroupFilter.Operator.AND)
-				.filterElements(Arrays.asList(FilterElements.builder().key("users.user.id").value(userId)
-						.type(FilterElements.FilterType.INTEGER).operator(FilterElements.OperatorType.EQUALS).build(),
-						FilterElements.builder().key("users.owner").value(true).type(FilterElements.FilterType.BOOLEAN)
-								.operator(FilterElements.OperatorType.EQUALS).build()))
-				.build()).showParameters(List.of("")).page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
-				.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build())).build();
-
-		ResponseMessage response = eventclient.get(filter, userId);
-		if (response.isOK()) {
-			Response<EventDTO> resp = (Response<EventDTO>) response.getMessage();
-			event = resp.getResults().get(0);
-		}
-
-		return event;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1036,6 +1267,26 @@ public class EventController {
 		return eventList;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private EventDTO getEventById(Integer id) {
+			FilterBuilder filter = Filter.builder();
+			filter.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build());
+			filter.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build()));
+			filter.showParameters(List.of(""));
+			filter.groupFilter(GroupFilter.builder().operator(GroupFilter.Operator.AND)
+					.filterElements(Arrays.asList(FilterElements.builder().key("id").value(id)
+						.type(FilterElements.FilterType.INTEGER).operator(FilterElements.OperatorType.EQUALS).build()))
+						.build());
+			
+			ResponseMessage response = eventclient.get(filter.build(), 0);
+			EventDTO event = null;
+			if (response.isOK()) {
+				Response<EventDTO> res = (Response<EventDTO>) response.getMessage();
+				event = res.getResults().get(0);
+			}
+			
+			return event;
+	}
 	
 
 }

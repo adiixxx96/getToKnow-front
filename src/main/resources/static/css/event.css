@@ -491,11 +491,12 @@ input[type="checkbox"]:checked::before {
 	width: 180px;
 }
 
-.event-column-one .disjoinEventBtn {
+.event-column-one .disjoinEventBtn, .event-column-one .reportEventBtn {
 	width: 140px;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	margin-top: 10px;
+	margin-right: 20px;
 }
 
 .event-column-one .editEventBtn {
@@ -530,4 +531,9 @@ input[type="checkbox"]:checked::before {
 
 .replies {
 	margin-left: 65px;
+}
+
+.backoffice-input-item {
+	margin-top: 30px;
+	margin-bottom: 20px;
 }

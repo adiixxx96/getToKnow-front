@@ -1,0 +1,272 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
+<link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" />
+</head>
+<body class="with-menu">
+	<header th:replace="fragments/common/header :: header"> </header>
+	<main>
+
+		<div id="messages">
+			<div th:replace="fragments/common/messages"></div>
+		</div>
+		<div id="messagesJs" style="display: none;">
+			<div th:replace="fragments/common/messagesJs"></div>
+		</div>
+
+		<h2 th:text="#{chat.list.title}"
+			class="text-body text-center section-title">Chats</h2>
+
+		<div id="main-container" class="d-flex flex-column">
+
+			<div class="accordion" id="accordionChatRequests">
+				<div class="accordion-item mb-2">
+					<h2 class="accordion-header">
+						<button class="accordion-button text-body-bold" type="button"
+							data-bs-toggle="collapse" data-bs-target="#bodyChatRequests"
+							aria-expanded="true" aria-controls="bodyChatRequests"
+							th:text="#{accordion.title.chatRequests}">Solicitudes de chat</button>
+					</h2>
+					<div id="bodyChatRequests" class="accordion-collapse collapse show"
+						data-bs-parent="#accordionChatRequests">
+						<div class="accordion-body d-flex flex-column gap-4">
+							<div th:if="${chatRequests == null}">
+								<h6 class="text-body"
+									th:text="#{accordion.text.chatRequests.empty}"></h6>
+							</div>
+							<div th:if="${chatRequests}"
+								th:each="chat : ${chatRequests}">
+
+								<div class="card d-flex flex-row align-items-center">
+									<div class="cardData d-flex gap-2">
+										<div class="user-avatar">
+									        <img th:if="${chat.userTo.profileImage != null}"
+									             th:src="${'../../' + chat.userTo.profileImage}"
+									             alt="Imagen del usuario"
+									             class="profile-image">		        
+									        <div th:if="${chat.userTo.profileImage == null}"
+									             class="avatar-circle bg-secondary-light text-light-bold"
+									             th:text="${chat.userTo.fullname.substring(0, 1)}">
+									        </div>
+							    		</div>
+										<div class="eventData d-flex flex-column justify-content-evenly">
+											<h6 class="card-title" th:text="${chat.userTo.fullname}">User fullname></h6>
+											<p class="userAge text-body d-flex" th:text="${chat.userTo.age} + ' años '">User age</p>
+										</div>
+									</div>
+									<div class="openChat d-flex">
+									    <a
+									        th:href="@{'/chat/detail/' + ${chat.id}}"
+									        class="btn btn-empty btn-sm rounded-pill text-body openChatBtn d-flex align-items-center">	 
+									        <i class="fa-solid fa-arrow-up-right-from-square fa-lg me-2"></i>
+									        <span th:text="#{chat.card.open.button}">Abrir chat</span>
+									    </a>
+									</div>
+									
+									<div class="ms-auto cardActions d-flex justify-content-end gap-3">
+										<div th:if="${user.id == chat.user1.id}" class="d-flex align-items-center">
+											<p class="text-body request-text" th:text="#{chat.request.sent}">Solicitud enviada</p>
+										</div>
+										<a
+									        th:if="${user.id == chat.user2.id}"
+									        class="btn btn-outline-primary btn-sm rounded-pill text-body acceptChatBtn d-flex align-items-center"
+									        th:data-user-id="${chat.id}"
+									        th:href="@{'/chat/accept/' + ${chat.id}}"
+									        onclick="disableLink(this)">
+									        <i class="fa-solid fa-check fa-xl me-2"></i>
+									        <span th:text="#{chat.card.acceptChat.button}">Aceptar</span>
+									   </a>									    
+									   <a	
+									   		th:if="${user.id == chat.user2.id}"
+									        class="btn btn-outline-danger btn-sm rounded-pill text-body rejectChatBtn d-flex align-items-center"
+									        th:data-user-id="${chat.id}"
+									        th:href="@{'/chat/reject/' + ${chat.id}}"
+									        onclick="disableLink(this)">
+									        <i class="fa-solid fa-xmark fa-xl me-2"></i>
+									        <span th:text="#{chat.card.rejectChat.button}">Rechazar</span>
+									    </a>
+									    <button
+									    	data-bs-toggle="modal" data-bs-target="#confirmBlockModal"
+									        class="btn btn-outline-dark btn-sm rounded-pill text-body blockUserBtn d-flex align-items-center"
+									        th:data-chat-id="${chat.id}" th:data-user-to-id="${chat.userTo.id}">
+									        <i class="fa-solid fa-ban fa-lg me-2"></i>
+									        <span th:text="#{chat.card.blockUser.button}">Bloquear usuario</span>
+									    </button>
+									</div>
+									<div class="ms-auto chatDate d-flex me-3">
+										<div class="text-muted ms-3" th:text="${#dates.format(chat.recentDate, 'dd/MM/yyyy HH:mm')}">Fecha más reciente</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="accordion" id="accordionActiveChats">
+				<div class="accordion-item mb-2">
+					<h2 class="accordion-header">
+						<button class="accordion-button text-body-bold" type="button"
+							data-bs-toggle="collapse" data-bs-target="#bodyActiveChats"
+							aria-expanded="true" aria-controls="bodyActiveChats"
+							th:text="#{accordion.title.activeChats}">Chats activos</button>
+					</h2>
+					<div id="bodyActiveChats" class="accordion-collapse collapse show"
+						data-bs-parent="#accordionActiveChats">
+						<div class="accordion-body d-flex flex-column gap-4">
+							<div th:if="${activeChats == null}">
+								<h6 class="text-body"
+									th:text="#{accordion.text.activeChats.empty}"></h6>
+							</div>
+							<div th:if="${activeChats}"
+								th:each="chat : ${activeChats}">
+
+								<div class="card d-flex flex-row align-items-center">
+									<div class="cardData d-flex gap-2">
+										<div class="user-avatar">
+									        <img th:if="${chat.userTo.profileImage != null}"
+									             th:src="${'../../' + chat.userTo.profileImage}"
+									             alt="Imagen del usuario"
+									             class="profile-image">		        
+									        <div th:if="${chat.userTo.profileImage == null}"
+									             class="avatar-circle bg-secondary-light text-light-bold"
+									             th:text="${chat.userTo.fullname.substring(0, 1)}">
+									        </div>
+							    		</div>
+										<div class="eventData d-flex flex-column justify-content-evenly">
+											<h6 class="card-title" th:text="${chat.userTo.fullname}">User fullname></h6>
+											<p class="userAge text-body d-flex" th:text="${chat.userTo.age} + ' años '">User age</p>
+										</div>
+									</div>
+									<div class="openChat d-flex">
+									    <a
+									        th:href="@{'/chat/detail/' + ${chat.id}}"
+									        class="btn btn-empty btn-sm rounded-pill text-body openChatBtn d-flex align-items-center">	 
+									        <i class="fa-solid fa-arrow-up-right-from-square fa-lg me-2"></i>
+									        <span th:text="#{chat.card.open.button}">Abrir chat</span>
+									    </a>
+									</div>
+									
+									<div class="ms-auto cardActions d-flex justify-content-end gap-3">
+									    <button
+									    	data-bs-toggle="modal" data-bs-target="#confirmBlockModal"
+									        class="btn btn-outline-dark btn-sm rounded-pill text-body blockUserBtn d-flex align-items-center"
+									        th:data-chat-id="${chat.id}" th:data-user-to-id="${chat.userTo.id}">
+									        <i class="fa-solid fa-ban fa-lg me-2"></i>
+									        <span th:text="#{chat.card.blockUser.button}">Bloquear usuario</span>
+									    </button>
+									</div>
+									<div class="ms-auto chatDate d-flex me-3">
+										<div class="text-muted ms-3" th:text="${#dates.format(chat.recentDate, 'dd/MM/yyyy HH:mm')}">Fecha más reciente</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="accordion" id="accordionInactiveChats">
+				<div class="accordion-item mb-2">
+					<h2 class="accordion-header">
+						<button class="accordion-button text-body-bold" type="button"
+							data-bs-toggle="collapse" data-bs-target="#bodyInactiveChats"
+							aria-expanded="true" aria-controls="bodyInactiveChats"
+							th:text="#{accordion.title.inactiveChats}">Chats inactivos o rechazados
+						</button>
+					</h2>
+					<div id="bodyInactiveChats" class="accordion-collapse collapse"
+						data-bs-parent="#accordionInactiveChats">
+						<div class="accordion-body d-flex flex-column gap-4">
+							<div th:if="${inactiveChats == null}">
+								<h6 class="text-body"
+									th:text="#{accordion.text.inactiveChats.empty}"></h6>
+							</div>
+							<div th:if="${inactiveChats}"
+								th:each="chat : ${inactiveChats}">
+
+								<div class="card d-flex flex-row align-items-center">
+									<div class="cardData d-flex gap-2">
+										<div class="user-avatar">
+									        <img th:if="${chat.userTo.profileImage != null}"
+									             th:src="${'../../' + chat.userTo.profileImage}"
+									             alt="Imagen del usuario"
+									             class="profile-image">		        
+									        <div th:if="${chat.userTo.profileImage == null}"
+									             class="avatar-circle bg-secondary-light text-light-bold"
+									             th:text="${chat.userTo.fullname.substring(0, 1)}">
+									        </div>
+							    		</div>
+										<div class="eventData d-flex flex-column justify-content-evenly">
+											<h6 class="card-title" th:text="${chat.userTo.fullname}">User fullname></h6>
+											<p class="userAge text-body d-flex" th:text="${chat.userTo.age} + ' años '">User age</p>
+										</div>
+									</div>
+									<div class="openChat d-flex">
+									    <a
+									        th:href="@{'/chat/detail/' + ${chat.id}}"
+									        class="btn btn-empty btn-sm rounded-pill text-body openChatBtn d-flex align-items-center">	 
+									        <i class="fa-solid fa-arrow-up-right-from-square fa-lg me-2"></i>
+									        <span th:text="#{chat.card.open.button}">Abrir chat</span>
+									    </a>
+									</div>
+									<div class="ms-auto chatDate d-flex me-3">
+										<div class="text-muted ms-3" th:text="${#dates.format(chat.recentDate, 'dd/MM/yyyy HH:mm')}">Fecha más reciente</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="modal fade" id="confirmBlockModal" tabindex="-1" role="dialog"
+			aria-labelledby="titleBlockModal" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+					<div class="modal-content">
+							<div class="form-content">
+								<form id="confirmBlockForm">
+									<div class="modal-header">
+											<h5 class="modal-title" id="titleBlockModal"
+													th:text="#{chat.block.modal.title}"></h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+											</button>
+									</div>
+									<div class="modal-body" id="modalBody">
+											<div id="messagesModalConfirmBlock">
+												<div th:replace="fragments/common/messages"></div>
+											</div>
+											<div class="form-group">
+												<label class="text-body" th:text="#{chat.block.confirm}"></label>
+											</div>
+											<div class="backoffice-input-item">
+												<label for="blockReason" th:text="#{chat.modal.block.reason}"></label>
+										        <select class="form-control rounded text-body" id="literal" name="literal">
+											    	<option th:text=#{form.placeholder.block.reason} th:value="''">Selecciona un literal...</option>
+													<option th:each="l : ${literals}" th:value="${l.id}" th:text="${l.literal}"/>
+											    </select>
+											</div>
+									</div>
+									<div class="modal-footer">
+											<button type="button" class="btn btn-empty cancelDataBtn"
+											data-bs-dismiss="modal" th:text="#{cancel}"></button>
+											<button type="button" class="btn btn-primary text-light rounded-pill confirmDataBtn"
+											data-bs-dismiss="modal" th:text="#{confirm}" id="modalConfirmBlock"></button>
+									</div>
+								</form>
+							</div>
+					</div>
+				</div>
+			</div>
+
+	</main>
+
+	<footer th:replace="fragments/common/footer :: footer"></footer>
+
+	<script type="text/javascript" src="../../../static/js/chat.js"
+		th:src="@{/js/chat.js}"></script>
+</body>
+</html>

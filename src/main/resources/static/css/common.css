@@ -111,6 +111,15 @@
 	background-color: #fe1063 !important;
 }
 
+.btn-outline-dark {
+	border: 3px solid #464F51 !important;
+}
+
+.btn-outline-dark:hover {
+	border: 3px solid #fe1063 !important;
+	background-color: transparent;
+}
+
 .btn-shadow:hover, .btn-shadow.active {
 	cursor: pointer;
 	background-color: #fff;
@@ -125,7 +134,6 @@
 }
 
 .btn-empty:hover {
-	font-weight: bold;
 	text-decoration: underline;
 }
 
@@ -157,7 +165,10 @@ main {
 }
 
 .section-title {
-	margin: 60px 0;
+	margin-left: 0;
+	margin-right:0;
+	margin-top: 60px;
+	margin-bottom: 40px;
 }
 
 .mt-20-negative {
@@ -213,3 +224,10 @@ button, a{
 .hide-important {
     display: none !important;
 }
+
+/* ********************Disable link******************** */
+.disabled-link {
+      pointer-events: none;
+      cursor: default;
+      text-decoration: none;
+   }

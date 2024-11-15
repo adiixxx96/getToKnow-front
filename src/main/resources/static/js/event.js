@@ -237,15 +237,17 @@ $(document).ready(function() {
 		}
 	});
 	
-	$('#reply').on('input', function() {
-		var maxLength = $(this).attr('maxlength');
-		var currentLength = $(this).val().length;
-
-		$('#charCountReply').text(currentLength + ' / ' + maxLength + ' caracteres');
-
-		if (currentLength > maxLength) {
-			$(this).val($(this).val().substring(0, maxLength));
-		}
+	$('.reply').on('input', function() {
+	    var maxLength = $(this).attr('maxlength');
+	    var currentLength = $(this).val().length;
+	
+	    // Encuentra el contador correspondiente a este textarea
+	    $(this).closest('.reply-form').find('.charCountReply').text(currentLength + ' / ' + maxLength + ' caracteres');
+	
+	    // Limita el contenido del textarea al máximo permitido
+	    if (currentLength > maxLength) {
+	        $(this).val($(this).val().substring(0, maxLength));
+	    }
 	});
 
 //Categories selection
@@ -529,7 +531,7 @@ function joinEvent(eventId) {
 
 function disjoinEvent(eventId) {
     
-    //Disable join event button
+    //Disable disjoin event button
     const buttons = document.querySelectorAll(`button[data-event-id='${eventId}']`);
 	buttons.forEach(button => {
 	    button.disabled = true;
@@ -614,6 +616,53 @@ function updateJoinEventButtons() {
         }
     });
 }
+
+$('#confirmReportModal').on('show.bs.modal', function(event) {
+    const button = $(event.relatedTarget);
+    const eventId = button.data('event-id');
+    const userId = button.data('user-id');
+
+    $(this).data('event-id', eventId);
+    $(this).data('user-id', userId);
+});
+
+$('#modalConfirmReport').on('click', function() {
+    const eventId = $('#confirmReportModal').data('event-id');
+    const userId = $('#confirmReportModal').data('user-id');
+    const reason = $('#literal').val();
+
+    if (!reason) {
+        alert("Por favor, selecciona un motivo para el bloqueo.");
+        return;
+    }
+
+    $.ajax({
+        url: '/event/reportEvent',
+        type: 'POST',
+        data: {
+            eventId: eventId,
+            userId: userId,
+            reason: reason
+        },
+        success: function(response) {
+            $('#confirmReportModal').modal('hide');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+			const successMessage = 'El evento ha sido reportado.';
+            showJsMessage(successMessage, 'success');
+            setTimeout(() => { 
+            	window.location.href = `/event/detail/${eventId}`;
+            }, 2000);
+        },
+        error: function() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            const errorMessage = 'Ha habido un error reportando el evento';
+            showJsMessage(errorMessage, 'error');
+            setTimeout(() => { 
+            	window.location.href = `/event/detail/${eventId}`;
+            }, 2000);
+        }
+    });
+});
 
 //Pagination functions
 function changePage(page) {

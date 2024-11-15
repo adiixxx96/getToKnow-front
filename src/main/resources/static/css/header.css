@@ -34,6 +34,10 @@
 	width: 150px;
 }
 
+.personalAreaButton i {
+	margin-right: 5px;
+}
+
 .rounded-circle {
 	display: flex;
     align-items: center;

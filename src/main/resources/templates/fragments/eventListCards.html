@@ -1,7 +1,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="eventListCards" class="d-flex flex-column">
 	<!-- 	Event cards -->
-	<div id="eventList"
+	<div th:if="${events.size < 1}" id="eventList">
+		<h6 class="text-body" th:text="#{events.list.empty}"></h6>
+	</div>
+	<!-- 	Event cards -->
+	<div th:if="${events}" id="eventList"
 		class="row row-cols-1 row-cols-md-3 g-4 eventCards d-flex align-self-start">
 		<div class="col" th:each="event : ${events}">
 			<div class="card justify-content-between">

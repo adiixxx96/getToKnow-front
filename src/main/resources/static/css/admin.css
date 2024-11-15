@@ -1,0 +1,174 @@
+@charset "UTF-8";
+
+.alert {
+	margin: 0 auto;
+	width: 800px;
+}
+
+#main-container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    margin-bottom: 40px; 
+}
+
+.event-column-one {
+    flex: 0 0 18%;             
+    padding-right: 20px;
+}
+
+.event-column-two {
+    flex: 0 0 77%;             
+    padding-left: 20px;       
+}
+
+.vertical-line {
+	width: 1px;
+	background-color: #8b9597;
+	margin-left: 25px;
+	margin-right: 25px;
+}
+
+.tabs .btn-shadow {
+	min-height: 70px;
+}
+
+.tabs i {
+	margin-right: 15px;
+}
+
+.accordion-item, .accordion-header, .accordion-body {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.accordion-button, .accordion-button:not(.collapsed), .accordion-button:focus {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.accordion-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
+.accordion-button::after {
+    margin-left: 0 !important;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.card {
+	height: 90px;
+	background-color: #fff;
+	border-radius: 30px;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+	border: none;
+	padding: 0 20px;
+}
+
+.cardData {
+    flex: 0 0 85%;             
+}
+
+.cardActions {
+    flex: 0 0 15%;                
+}
+
+.cardDataEvent {
+    flex: 0 0 90%;             
+}
+
+.cardActionsEvent {
+    flex: 0 0 10%;                
+}
+
+.user-avatar .profile-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-avatar .avatar-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+}
+
+.user-avatar-sm .profile-image {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-avatar-sm .avatar-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+}
+
+.personalData {
+    flex: 1 1 50%;
+}
+
+.eventDataLarge {
+	flex: 1 1 65%;
+}
+
+.eventDataSmall {
+	flex: 1 1 35%;
+}
+
+.event-detail {
+    flex: 1 1 50%;
+}
+
+.card img {
+	height: 90px;
+	width: 160px;
+}
+
+.card-title {
+	text-decoration: none;
+}
+
+.card-title:hover {
+	text-decoration: underline;
+}
+
+.card i {
+	color: #D68FD6;
+}
+
+.disjoinEventBtn {
+	width: 140px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-right: 30px;
+}
+
+.editEventBtn {
+	width: 110px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.deleteEventBtn {
+	width: 110px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-right: 30px;
+}

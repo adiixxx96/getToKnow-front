@@ -32,7 +32,7 @@
       	
       	<div id="navbarLoggedContent" class="d-flex flex-row justify-content-evenly">
 <!--       		Botón mostrado si el usuario es admin -->
-			<a th:if="${isAdmin}" href="/admin/" class="btn btn-outline-primary btn-sm rounded-circle" 
+			<a th:if="${isAdmin}" href="/user/admin/" class="btn btn-outline-primary btn-sm rounded-circle" 
 			data-toggle="tooltip" data-placement="bottom" th:title="#{header.admin.tooltip}">
 				<i class="fa-solid fa-gear fa-lg" style="color: #ffffff;"></i>
   			</a>
@@ -41,7 +41,7 @@
 			<a th:if="${isLogged}" class="btn btn-outline-primary btn-sm rounded-circle">
 				<i class="fa-solid fa-bell fa-lg" style="color: #ffffff;"></i>
   			</a>
-  			<a th:if="${isLogged}" href="/chats/" class="btn btn-outline-primary btn-sm rounded-circle" 
+  			<a th:if="${isLogged}" href="/chat/list/" class="btn btn-outline-primary btn-sm rounded-circle" 
 			data-toggle="tooltip" data-placement="bottom" th:title="#{header.chats.tooltip}">
 				<i class="fa-solid fa-comments fa-lg" style="color: #ffffff;"></i>
   			</a>
