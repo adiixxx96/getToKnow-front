@@ -35,7 +35,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.adape.gtk.core.client.beans.BlockByUserDTO;
 import com.adape.gtk.core.client.beans.CategoryDTO;
 import com.adape.gtk.core.client.beans.CategoryIconMapper;
-import com.adape.gtk.core.client.beans.ChatDTO;
 import com.adape.gtk.core.client.beans.CommentDTO;
 import com.adape.gtk.core.client.beans.EventDTO;
 import com.adape.gtk.core.client.beans.Filter;
@@ -641,125 +640,129 @@ public class EventController {
 		
 		//Check if it is allowed to have openChatButton for every user
 		
+		if (user != null) {
 			//Get blocks by user
-		List<BlockByUserDTO> blocks = new ArrayList<>();
-		
-		Filter filterBlocks = Filter.builder()
-    			.groupFilter(GroupFilter.builder()
-    					.operator(GroupFilter.Operator.AND)
-    					.groupFilter(Arrays.asList(GroupFilter.builder()
-    								.operator(GroupFilter.Operator.OR)
-    								.filterElements(Arrays.asList(
-    										FilterElements.builder()
-			    							.key("blocked.id")
-			    							.value(user.getId())
-			    							.type(FilterElements.FilterType.INTEGER)
-			    							.operator(FilterElements.OperatorType.EQUALS).build(),
-		    								FilterElements.builder()
-			    							.key("reporter.id")
-			    							.value(user.getId())
-			    							.type(FilterElements.FilterType.INTEGER)
-			    							.operator(FilterElements.OperatorType.EQUALS).build()))
-		    						.build()))
-    					.build())
-    			.showParameters(List.of("blocked", "reporter"))
-    			.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
-    			.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build()))
-    			.build();
-		
-		ResponseMessage responseBlock = blockclient.get(filterBlocks, user.getId());
-		
-		if (responseBlock.isOK()) {
-			Response<BlockByUserDTO> resp = (Response<BlockByUserDTO>) responseBlock.getMessage();
-			blocks = resp.getResults();
-		}
-		
-		//Check first eventOwner
-		if (eventOwner.getId().equals(user.getId())) {
-			eventOwner.setAllowChat(false);
-	
-		} else {
-			if (!blocks.isEmpty()) {
-				boolean blockFound = false;
-				for (BlockByUserDTO block : blocks) {
-					if ((block.getBlocked().getId().equals(eventOwner.getId()) && block.getReporter().getId().equals(user.getId()))
-							|| (block.getBlocked().getId().equals(user.getId()) && block.getReporter().getId().equals(eventOwner.getId()))) {
-						blockFound = true;
-						break;
-					}
-				}
-				if (blockFound) {
-					eventOwner.setAllowChat(false);
-				} else {
-					eventOwner.setAllowChat(true);
-				}
-			} else {
-				eventOwner.setAllowChat(true);
-			}	
-		}
-		
-		//Check eventParticipants
-		for (UserDTO eventParticipant : eventParticipants) {
-			if (eventParticipant.getId().equals(user.getId())) {
-				eventParticipant.setAllowChat(false);
+			List<BlockByUserDTO> blocks = new ArrayList<>();
+			
+			Filter filterBlocks = Filter.builder()
+	    			.groupFilter(GroupFilter.builder()
+	    					.operator(GroupFilter.Operator.AND)
+	    					.groupFilter(Arrays.asList(GroupFilter.builder()
+	    								.operator(GroupFilter.Operator.OR)
+	    								.filterElements(Arrays.asList(
+	    										FilterElements.builder()
+				    							.key("blocked.id")
+				    							.value(user.getId())
+				    							.type(FilterElements.FilterType.INTEGER)
+				    							.operator(FilterElements.OperatorType.EQUALS).build(),
+			    								FilterElements.builder()
+				    							.key("reporter.id")
+				    							.value(user.getId())
+				    							.type(FilterElements.FilterType.INTEGER)
+				    							.operator(FilterElements.OperatorType.EQUALS).build()))
+			    						.build()))
+	    					.build())
+	    			.showParameters(List.of("blocked", "reporter"))
+	    			.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
+	    			.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build()))
+	    			.build();
+			
+			ResponseMessage responseBlock = blockclient.get(filterBlocks, user.getId());
+			
+			if (responseBlock.isOK()) {
+				Response<BlockByUserDTO> resp = (Response<BlockByUserDTO>) responseBlock.getMessage();
+				blocks = resp.getResults();
+			}
+			
+			//Check first eventOwner
+			if (eventOwner.getId().equals(user.getId())) {
+				eventOwner.setAllowChat(false);
 		
 			} else {
 				if (!blocks.isEmpty()) {
 					boolean blockFound = false;
 					for (BlockByUserDTO block : blocks) {
-						if ((block.getBlocked().getId().equals(eventParticipant.getId()) && block.getReporter().getId().equals(user.getId()))
-								|| (block.getBlocked().getId().equals(user.getId()) && block.getReporter().getId().equals(eventParticipant.getId()))) {
+						if ((block.getBlocked().getId().equals(eventOwner.getId()) && block.getReporter().getId().equals(user.getId()))
+								|| (block.getBlocked().getId().equals(user.getId()) && block.getReporter().getId().equals(eventOwner.getId()))) {
 							blockFound = true;
 							break;
 						}
 					}
 					if (blockFound) {
-						eventParticipant.setAllowChat(false);
+						eventOwner.setAllowChat(false);
 					} else {
-						eventParticipant.setAllowChat(true);
+						eventOwner.setAllowChat(true);
 					}
 				} else {
-					eventParticipant.setAllowChat(true);
+					eventOwner.setAllowChat(true);
 				}	
 			}
+			
+			//Check eventParticipants
+			for (UserDTO eventParticipant : eventParticipants) {
+				if (eventParticipant.getId().equals(user.getId())) {
+					eventParticipant.setAllowChat(false);
+			
+				} else {
+					if (!blocks.isEmpty()) {
+						boolean blockFound = false;
+						for (BlockByUserDTO block : blocks) {
+							if ((block.getBlocked().getId().equals(eventParticipant.getId()) && block.getReporter().getId().equals(user.getId()))
+									|| (block.getBlocked().getId().equals(user.getId()) && block.getReporter().getId().equals(eventParticipant.getId()))) {
+								blockFound = true;
+								break;
+							}
+						}
+						if (blockFound) {
+							eventParticipant.setAllowChat(false);
+						} else {
+							eventParticipant.setAllowChat(true);
+						}
+					} else {
+						eventParticipant.setAllowChat(true);
+					}	
+				}
+			}
+			
+			//Get literals for event reports
+			Filter filterLiterals = Filter.builder()
+	    			.groupFilter(GroupFilter.builder()
+	    					.operator(GroupFilter.Operator.AND)
+	    					.groupFilter(Arrays.asList(GroupFilter.builder()
+	    								.operator(GroupFilter.Operator.AND)
+	    								.filterElements(Arrays.asList(
+	    										FilterElements.builder()
+				    							.key("active")
+				    							.value(true)
+				    							.type(FilterElements.FilterType.BOOLEAN)
+				    							.operator(FilterElements.OperatorType.EQUALS).build(),
+			    								FilterElements.builder()
+				    							.key("type")
+				    							.value(LiteralTypeEnum.REPORT.getType())
+				    							.type(FilterElements.FilterType.INTEGER)
+				    							.operator(FilterElements.OperatorType.EQUALS).build()))
+			    						.build()))
+	    					.build())
+	    			.showParameters(List.of(""))
+	    			.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
+	    			.sorting(List.of(Sorting.builder().field("id").order(Order.ASC).build()))
+	    			.build();
+			
+			ResponseMessage responseLiteral = literalclient.get(filterLiterals, user.getId());
+			
+			List<LiteralDTO> literals = new ArrayList<>();
+			if (responseLiteral.isOK()) {
+				Response<LiteralDTO> resp = (Response<LiteralDTO>) responseLiteral.getMessage();
+				literals = resp.getResults();
+			} else {
+				log.error("Error getting literals");
+				return "pages/event/eventDetail";
+			}
+			
+			model.addAttribute("literals", literals);
+			
 		}
 		
-		//Get literals for event reports
-				Filter filterLiterals = Filter.builder()
-		    			.groupFilter(GroupFilter.builder()
-		    					.operator(GroupFilter.Operator.AND)
-		    					.groupFilter(Arrays.asList(GroupFilter.builder()
-		    								.operator(GroupFilter.Operator.AND)
-		    								.filterElements(Arrays.asList(
-		    										FilterElements.builder()
-					    							.key("active")
-					    							.value(true)
-					    							.type(FilterElements.FilterType.BOOLEAN)
-					    							.operator(FilterElements.OperatorType.EQUALS).build(),
-				    								FilterElements.builder()
-					    							.key("type")
-					    							.value(LiteralTypeEnum.REPORT.getType())
-					    							.type(FilterElements.FilterType.INTEGER)
-					    							.operator(FilterElements.OperatorType.EQUALS).build()))
-				    						.build()))
-		    					.build())
-		    			.showParameters(List.of(""))
-		    			.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
-		    			.sorting(List.of(Sorting.builder().field("id").order(Order.ASC).build()))
-		    			.build();
-				
-				ResponseMessage responseLiteral = literalclient.get(filterLiterals, user.getId());
-				
-				List<LiteralDTO> literals = new ArrayList<>();
-				if (responseLiteral.isOK()) {
-					Response<LiteralDTO> resp = (Response<LiteralDTO>) responseLiteral.getMessage();
-					literals = resp.getResults();
-				} else {
-					log.error("Error getting literals");
-					return "pages/event/eventDetail";
-				}
-				
-				model.addAttribute("literals", literals);
 
 		model.addAttribute("joinedUser", joinedUser);
 		model.addAttribute("eventOwner", eventOwner);
