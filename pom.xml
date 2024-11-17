@@ -133,6 +133,13 @@
         	<groupId>com.adape.gtk</groupId>
         	<artifactId>gtk-core</artifactId>
         	<version>${gtk-core.version}</version>
+        	<classifier>integration</classifier>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
     	</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -164,6 +171,27 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<classifier>exec</classifier>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<configuration>
+							<classifier>integration</classifier>
+							<includes>
+								<include>**/client/**</include>
+							</includes>
+						</configuration>
+						<id>pack-integration</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
