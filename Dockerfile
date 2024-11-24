@@ -2,7 +2,10 @@ FROM maven:3.8.4-openjdk-17 AS build
 WORKDIR /app
 COPY . .
 COPY settings.xml /root/.m2/settings.xml
-RUN mvn clean install -DskipTests
+RUN ls -l /root/.m2/ && cat /root/.m2/settings.xml
+RUN mvn -s /root/.m2/settings.xml \
+    -Dgithub.token=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 \
+    clean install -DskipTests
 
 FROM openjdk:17-jdk-slim
 WORKDIR /app
