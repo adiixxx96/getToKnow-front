@@ -3,9 +3,7 @@ WORKDIR /app
 COPY . .
 COPY settings.xml /root/.m2/settings.xml
 RUN ls -l /root/.m2/ && cat /root/.m2/settings.xml
-RUN mvn -s /root/.m2/settings.xml \
-    -Dgithub.token=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 \
-    clean install -DskipTests
+RUN mvn clean install -DskipTests
 
 FROM openjdk:17-jdk-slim
 WORKDIR /app
