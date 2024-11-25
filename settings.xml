@@ -6,7 +6,7 @@
     <server>
       <id>github</id>
       <username>adiixxx96</username>
-      <password>${env.GITHUB_TOKEN}</password>
+      <password>${github.token}</password>
     </server>
   </servers>
   <profiles>
