@@ -66,6 +66,11 @@
 			<artifactId>mssql-jdbc</artifactId>
 		</dependency>
 		<dependency>
+   			<groupId>mysql</groupId>
+    		<artifactId>mysql-connector-java</artifactId>
+    		<version>8.0.24</version>
+		</dependency>
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
@@ -133,13 +138,6 @@
         	<groupId>com.adape.gtk</groupId>
         	<artifactId>gtk-core</artifactId>
         	<version>${gtk-core.version}</version>
-        	<classifier>integration</classifier>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
     	</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
