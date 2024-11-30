@@ -95,7 +95,7 @@ public class EventController {
 	private ReportByEventIntService reportclient;
 
 
-	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/list")
 	public String eventController(@RequestParam(value = "category", required = false) Integer categoryId, Model model,
 			HttpSession session, HttpServletRequest request) {
 
@@ -230,7 +230,7 @@ public class EventController {
 		return "pages/event/eventList";
 	}
 
-	@RequestMapping(value = "/search", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/search")
 	public String eventSearch(@RequestBody(required = false) EventFilters params, Model model, HttpSession session,
 			HttpServletRequest request) {
 

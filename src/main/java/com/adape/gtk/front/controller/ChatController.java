@@ -65,7 +65,7 @@ public class ChatController {
 	@Autowired
 	private MessageIntService messageclient;
 
-	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/list")
 	public String chatListController(Model model, HttpSession session, HttpServletRequest request) {
 
 		String requestURI = request.getRequestURI();
