@@ -33,7 +33,7 @@
 			  <div class="mb-4 flex-grow-1">
 			    <label for="image" class="form-label text-body mb-0" th:text="#{form.label.event.image}">Imagen</label>
 			    <div class="input-with-icon-right">
-			    	<input type="text" class="form-control rounded text-body" id="image" name="image" 
+			    	<input disabled type="text" class="form-control rounded text-body" id="image" name="image" title="Disponible próximamente. Se asignará una imagen de acuerdo con la categoría de tu evento." 
 			    			th:value="${event != null ? #strings.substringAfter(event.image, 'images/') : ''}" th:placeholder="#{form.placeholder.event.image}" readonly>
 			    	<i class="fa-solid fa-arrow-up-from-bracket fa-lg"></i>
 			    </div>

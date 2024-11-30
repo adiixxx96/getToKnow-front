@@ -1,4 +1,4 @@
-//Function to hide/show password in forms with passwords
+//Function to hide/show password
  function togglePassword() {
     var passwordInput = document.getElementById("password");
     var toggleIcon = document.querySelector(".toggle-password");

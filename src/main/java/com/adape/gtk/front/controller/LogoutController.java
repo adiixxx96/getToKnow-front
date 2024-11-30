@@ -15,7 +15,7 @@ public class LogoutController {
 	
 	@RequestMapping(value="/")
 	public String logout(HttpServletRequest request) {
-        // Obtenemos la sesión del usuario y la invalidamos
+        // Set session to null
         HttpSession session = request.getSession(false);
         
         if (session != null) {

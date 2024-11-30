@@ -1,327 +1,354 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<head
-	th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
+
+<head th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/profile.css}" />
 </head>
+
 <body class="with-menu">
-	<header
-		th:replace="fragments/common/header :: header">
+	<header th:replace="fragments/common/header :: header">
 	</header>
-	
-	<main>	
+
+	<main>
 		<div id="messages">
 			<div th:replace="fragments/common/messages"></div>
 		</div>
 		<div id="messagesJs" style="display: none;">
 			<div th:replace="fragments/common/messagesJs"></div>
 		</div>
-		
+
 		<h2 th:text="#{profile.title}" class="text-body text-center section-title">Área personal</h2>
 		<div id="main-container" class="d-flex flex-row">
-			
+
 			<div class="event-column-one">
 				<div class="tabs d-flex flex-column gap-3">
-					<div class="btn btn-shadow text-body d-flex align-items-center py-2 personalDataButton active" onclick="showSection('personalData', this)">
+					<div class="btn btn-shadow text-body d-flex align-items-center py-2 personalDataButton active"
+						onclick="showSection('personalData', this)">
 						<i class="fa-solid fa-user fa-xl" style="color: #D68FD6;"></i>
-		    			<span class="text-body text-start" th:text="#{profile.tab.personal.data}">Datos personales</span>
+						<span class="text-body text-start" th:text="#{profile.tab.personal.data}">Datos
+							personales</span>
 					</div>
-					<div class="btn btn-shadow text-body d-flex align-items-center py-2 eventsParticipantButton" onclick="showSection('eventsParticipant', this)">
+					<div class="btn btn-shadow text-body d-flex align-items-center py-2 eventsParticipantButton"
+						onclick="showSection('eventsParticipant', this)">
 						<i class="fa-regular fa-calendar-check fa-2xl" style="color: #D68FD6;"></i>
-		    			<span class="text-body text-start" th:text="#{profile.tab.events.participant}">Eventos en los que participo</span>
+						<span class="text-body text-start" th:text="#{profile.tab.events.participant}">Eventos en los
+							que participo</span>
 					</div>
-					<div class="btn btn-shadow text-body d-flex align-items-center py-2 eventsOwnerButton" onclick="showSection('eventsOwner', this)">
+					<div class="btn btn-shadow text-body d-flex align-items-center py-2 eventsOwnerButton"
+						onclick="showSection('eventsOwner', this)">
 						<i class="fa-regular fa-star fa-2xl" style="color: #D68FD6;"></i>
-		    			<span class="text-body text-start" th:text="#{profile.tab.events.owner}">Mis eventos creados</span>
+						<span class="text-body text-start" th:text="#{profile.tab.events.owner}">Mis eventos
+							creados</span>
 					</div>
-				</div>				
+				</div>
 			</div>
-			
+
 			<div class="vertical-line"></div>
-			
+
 			<div class="event-column-two">
 				<div id="personalData" class="content-section">
 					<div id="personalDataContent" class="d-flex flex-column align-items-center">
 						<div class="user-avatar">
-							<img th:if="${user.profileImage != null}"
-						         th:src="${'../../' + user.profileImage}"
-						         alt="Imagen de perfil"
-						         class="profile-image">		        
-						    <div th:if="${user.profileImage == null}"
-						         class="avatar-circle bg-secondary-light text-light-bold"
-						         th:text="${user.fullname.substring(0, 1)}">
-						    </div>
-					    </div>
-						<form id="userDataForm" th:action="@{/user/editProfile}" method="post" class="d-flex flex-column justify-content-center mt-5">
+							<img th:if="${user.profileImage != null}" th:src="${user.profileImage}"
+								alt="Imagen de perfil" class="profile-image">
+							<div th:if="${user.profileImage == null}"
+								class="avatar-circle bg-secondary-light text-light-bold"
+								th:text="${user.fullname.substring(0, 1)}">
+							</div>
+						</div>
+						<form id="userDataForm" th:action="@{/user/editProfile}" method="post" enctype="multipart/form-data"
+							class="d-flex flex-column justify-content-center mt-5">
 							<div class="form-actions d-flex gap-3">
-								<button type="submit" onclick="validateData(this.form)" class="btn btn-secondary text-light rounded-pill saveDataBtn align-self-center" 
-				  				th:text="#{form.user.data.save}">Guardar cambios</button>
-				  				<button type="button" class="btn btn-empty" onclick="location.reload()">Cancelar</button>
+								<button type="submit" onclick="validateData(this.form)"
+									class="btn btn-secondary text-light rounded-pill saveDataBtn align-self-center"
+									th:text="#{form.user.data.save}">Guardar cambios</button>
+								<button type="button" class="btn btn-empty"
+									onclick="location.reload()">Cancelar</button>
 							</div>
-										
+
 							<div style="display:none;">
-							    <input type="hidden" id="userId" name="userId" th:value="${user.id}" />
+								<input type="hidden" id="userId" name="userId" th:value="${user.id}" />
 							</div>
 							<div class="inputsRow d-flex flex-row justify-content-between gap-4">
 								<div class="mb-4 flex-grow-1">
-								    <label for="fullname" class="form-label text-body" th:text="#{form.label.user.fullname}">Nombre completo</label>
-								    <input type="text" class="form-control rounded text-body" id="fullname" name="fullname" th:value="${user.fullname}">
-								    <div class="invalid-feedback" style="display: none;" id="fullnameError">Este campo es obligatorio.</div>
-							  	</div>
-							  <div class="mb-4 flex-grow-1">
-							    <label for="profileImage" class="form-label text-body" th:text="#{form.label.user.image}">Imagen de perfil</label>
-							    <div class="input-with-icon-right d-flex align-items-center">
-							    	<input type="text" class="form-control rounded text-body" id="profileImage" name="profileImage" 
-							    			th:value="${user.profileImage != null ? #strings.substringAfter(event.image, 'images/') : ''}" readonly>
-							    	<i class="fa-solid fa-arrow-up-from-bracket fa-lg"></i>
-							    </div>
-							   </div>
-							  <div class="mb-4 flex-grow-1">
-							    <label for="birthDate" class="form-label text-body" th:text="#{form.label.user.birthdate}">Fecha de nacimiento</label>
-							    <div class="input-with-icon d-flex align-items-center">
-							    	<i class="fas fa-calendar-alt fa-lg"></i>
-							    	<input type="text" class="form-control rounded text-body dateInput" id="birthDate" name="birthDate" 
-							    			th:value="${formattedBirthDate}" disabled>
-							    </div>
-							  </div>
+									<label for="fullname" class="form-label text-body"
+										th:text="#{form.label.user.fullname}">Nombre completo</label>
+									<input type="text" class="form-control rounded text-body" id="fullname"
+										name="fullname" th:value="${user.fullname}">
+									<div class="invalid-feedback" style="display: none;" id="fullnameError">Este campo
+										es obligatorio.</div>
+								</div>
+								<div class="mb-4 flex-grow-1">
+									<label for="profileImage" class="form-label text-body"
+										th:text="#{form.label.user.image}">Imagen de perfil</label>
+									<div class="input-with-icon-right d-flex align-items-center">
+										<input type="text" class="form-control rounded text-body" id="fakeInput"
+											readonly placeholder="Selecciona un archivo" onclick="triggerFileInput()">
+										<i class="fa-solid fa-arrow-up-from-bracket fa-lg position-absolute end-0 me-2"
+											onclick="triggerFileInput()" style="cursor: pointer;"></i>
+
+										<input type="file" class="d-none" id="profileImage" name="profileImage">
+									</div>
+								</div>
+								<div class="mb-4 flex-grow-1">
+									<label for="birthDate" class="form-label text-body"
+										th:text="#{form.label.user.birthdate}">Fecha de nacimiento</label>
+									<div class="input-with-icon d-flex align-items-center">
+										<i class="fas fa-calendar-alt fa-lg"></i>
+										<input type="text" class="form-control rounded text-body dateInput"
+											id="birthDate" name="birthDate" th:value="${formattedBirthDate}" disabled>
+									</div>
+								</div>
 							</div>
 							<div class="inputsRow d-flex flex-row justify-content-between gap-4">
 								<div class="mb-4 flex-grow-1">
-								    <label for="email" class="form-label text-body" th:text="#{form.label.user.email}">Email</label>
-								    <input type="text" class="form-control rounded text-body" id="email" name="email" th:value="${user.email}" disabled>
-							  	</div>
-							  	<div class="mb-4 flex-grow-1">
-								    <label for="password" class="form-label text-body" th:text="#{form.label.user.password}">Contraseña</label>
-								    <div class="input-with-icon-right d-flex align-items-center">
-								    	<input type="password" class="form-control rounded text-body" id="password" name="password" th:value="${decodedPassword}">
-								    	<i class="fas fa-eye fa-lg toggle-password" onclick="togglePassword()"></i>
-								    </div>
-								    <div class="invalid-feedback" style="display: none;" id="passwordError">Este campo es obligatorio y debe tener mínimo 8 caracteres.</div>
-							  	</div>
+									<label for="email" class="form-label text-body"
+										th:text="#{form.label.user.email}">Email</label>
+									<input type="text" class="form-control rounded text-body" id="email" name="email"
+										th:value="${user.email}" disabled>
+								</div>
+								<div class="mb-4 flex-grow-1">
+									<label for="password" class="form-label text-body"
+										th:text="#{form.label.user.password}">Contraseña</label>
+									<div class="input-with-icon-right d-flex align-items-center">
+										<input type="password" class="form-control rounded text-body" id="password"
+											name="password" th:value="${decodedPassword}">
+										<i class="fas fa-eye fa-lg toggle-password" onclick="togglePassword()"></i>
+									</div>
+									<div class="invalid-feedback" style="display: none;" id="passwordError">Este campo
+										es obligatorio y debe tener mínimo 8 caracteres.</div>
+								</div>
 							</div>
 						</form>
 					</div>
 				</div>
 				<div id="eventsParticipant" class="content-section" style="display: none;">
 					<div class="accordion" id="accordionEventsParticipantFuture">
-					  <div class="accordion-item mb-2">
-					    <h2 class="accordion-header">
-					      <button class="accordion-button text-body-bold" type="button" data-bs-toggle="collapse" data-bs-target="#bodyEventsParticipantFuture" aria-expanded="true" aria-controls="bodyEventsParticipantFuture"
-					      		th:text="#{accordion.title.events.future}">Eventos futuros
-					      </button>
-					    </h2>
-					    <div id="bodyEventsParticipantFuture" class="accordion-collapse collapse show" data-bs-parent="#accordionEventsParticipantFuture">
-					      <div class="accordion-body d-flex flex-column gap-4">
-					      	<div th:if="${eventsParticipantFuture == null}">
-					      		<h6 class="text-body" th:text="#{accordion.text.eventsParticipantFuture.empty}"></h6>
-					      	</div>
-					        <div th:if="${eventsParticipantFuture}" th:each="event : ${eventsParticipantFuture}">
+						<div class="accordion-item mb-2">
+							<h2 class="accordion-header">
+								<button class="accordion-button text-body-bold" type="button" data-bs-toggle="collapse"
+									data-bs-target="#bodyEventsParticipantFuture" aria-expanded="true"
+									aria-controls="bodyEventsParticipantFuture"
+									th:text="#{accordion.title.events.future}">Eventos futuros
+								</button>
+							</h2>
+							<div id="bodyEventsParticipantFuture" class="accordion-collapse collapse show"
+								data-bs-parent="#accordionEventsParticipantFuture">
+								<div class="accordion-body d-flex flex-column gap-4">
+									<div th:if="${eventsParticipantFuture == null}">
+										<h6 class="text-body" th:text="#{accordion.text.eventsParticipantFuture.empty}">
+										</h6>
+									</div>
+									<div th:if="${eventsParticipantFuture}"
+										th:each="event : ${eventsParticipantFuture}">
 
-					        	<div class="card d-flex flex-row justify-content-between align-items-center">
-					        		<div class="cardData d-flex gap-2">
-					        			<img th:src="${'../../' + event.image}" class="card-img-top"
-											alt="Imagen del evento">
-					        			<div class="eventData d-flex flex-column justify-content-evenly">
-					        				<div class="card-body-title">
-												<h6 class="card-title">
-													<a class="card-title" th:href="@{'/event/detail/' + ${event.id}}" th:text="${event.title}">Event title</a>
-												</h6>
-											</div>
-											<div class="card-body-text d-flex flex-row gap-5">
-												<div class="d-flex pt-3 align-items-center">
-													<i class="fas fa-calendar-alt fa-lg me-2"></i>
-													<p class="card-text"
-														th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">
-														Event date</p>
-												</div>
-												<div class="d-flex pt-3 align-items-center">
-													<i class="fa-solid fa-location-dot fa-lg me-2"></i>
-													<p class="card-text" th:text="${event.city}">Localidad</p>
-												</div>
-											</div>
-					        			</div>
-					        		</div>
-					        		<div class="cardActions d-flex justify-content-end gap-3">
-					        			<button class="btn btn-danger btn-sm rounded-pill text-light disjoinEventBtn"
-											th:data-event-id="${event.id}"
-											th:text="#{event.detail.disjoin.button}"
-											th:attr="onclick='disjoinEvent(' + ${event.id} + ')'" >Desapuntarme	
-										</button>
-					        		</div>
-					        	</div>
-					        </div>
-					      </div>
-					    </div>
-					  </div>
-					  </div>
-					  <div class="accordion" id="accordionEventsParticipantPast">
-					  <div class="accordion-item mb-2">
-					    <h2 class="accordion-header">
-					      <button class="accordion-button text-body-bold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bodyEventsParticipantPast" aria-expanded="false" aria-controls="bodyEventsParticipantPast"
-					      		th:text="#{accordion.title.events.past}">Eventos Pasados
-					      </button>
-					    </h2>
-					    <div id="bodyEventsParticipantPast" class="accordion-collapse collapse" data-bs-parent="#accordionEventsParticipantPast">
-					      <div class="accordion-body d-flex flex-column gap-4">
-					      	<div th:if="${eventsParticipantPast == null}">
-					      		<h6 class="text-body" th:text="#{accordion.text.eventsParticipantPast.empty}"></h6>
-					      	</div>
-					        <div th:if="${eventsParticipantPast}" th:each="event : ${eventsParticipantPast}">
-					        	<div class="card d-flex flex-row justify-content-between align-items-center">
-					        		<div class="cardData d-flex gap-2">
-					        			<img th:src="${'../../' + event.image}" class="card-img-top"
-											alt="Imagen del evento">
-					        			<div class="eventData d-flex flex-column justify-content-evenly">
-					        				<div class="card-body-title">
-												<h6 class="card-title">
-													<a class="card-title" th:href="@{'/event/detail/' + ${event.id}}" th:text="${event.title}">Event title</a>
-												</h6>
-											</div>
-											<div class="card-body-text d-flex flex-row gap-5">
-												<div class="d-flex pt-3 align-items-center">
-													<i class="fas fa-calendar-alt fa-lg me-2"></i>
-													<p class="card-text"
-														th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">
-														Event date</p>
-												</div>
-												<div class="d-flex pt-3 align-items-center">
-													<i class="fa-solid fa-location-dot fa-lg me-2"></i>
-													<p class="card-text" th:text="${event.city}">Localidad</p>
+										<div class="card d-flex flex-row justify-content-between align-items-center">
+											<div class="cardData d-flex gap-2">
+												<img th:src="${'../../' + event.image}" class="card-img-top"
+													alt="Imagen del evento">
+												<div class="eventData d-flex flex-column justify-content-evenly">
+													<div class="card-body-title">
+														<h6 class="card-title">
+															<a class="card-title"
+																th:href="@{'/event/detail/' + ${event.id}}"
+																th:text="${event.title}">Event title</a>
+														</h6>
+													</div>
+													<div class="card-body-text d-flex flex-row gap-5">
+														<div class="d-flex pt-3 align-items-center">
+															<i class="fas fa-calendar-alt fa-lg me-2"></i>
+															<p class="card-text"
+																th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">
+																Event date</p>
+														</div>
+														<div class="d-flex pt-3 align-items-center">
+															<i class="fa-solid fa-location-dot fa-lg me-2"></i>
+															<p class="card-text" th:text="${event.city}">Localidad</p>
+														</div>
+													</div>
 												</div>
 											</div>
-					        			</div>
-					        		</div>
-					        		<div class="cardActions d-flex justify-content-end gap-3">
-					        			<button class="btn btn-danger btn-sm rounded-pill text-light disjoinEventBtn"
-											th:data-event-id="${event.id}"
-											th:text="#{event.detail.disjoin.button}"
-											th:attr="onclick='disjoinEvent(' + ${event.id} + ')'" >Desapuntarme	
-										</button>
-					        		</div>
-					        	</div>
-					        </div>
-					      </div>
-					    </div>
-					  </div>
+											<div class="cardActions d-flex justify-content-end gap-3">
+												<button
+													class="btn btn-danger btn-sm rounded-pill text-light disjoinEventBtn"
+													th:data-event-id="${event.id}"
+													th:text="#{event.detail.disjoin.button}"
+													th:attr="onclick='disjoinEvent(' + ${event.id} + ')'">Desapuntarme
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion" id="accordionEventsParticipantPast">
+						<div class="accordion-item mb-2">
+							<h2 class="accordion-header">
+								<button class="accordion-button text-body-bold collapsed" type="button"
+									data-bs-toggle="collapse" data-bs-target="#bodyEventsParticipantPast"
+									aria-expanded="false" aria-controls="bodyEventsParticipantPast"
+									th:text="#{accordion.title.events.past}">Eventos Pasados
+								</button>
+							</h2>
+							<div id="bodyEventsParticipantPast" class="accordion-collapse collapse"
+								data-bs-parent="#accordionEventsParticipantPast">
+								<div class="accordion-body d-flex flex-column gap-4">
+									<div th:if="${eventsParticipantPast == null}">
+										<h6 class="text-body" th:text="#{accordion.text.eventsParticipantPast.empty}">
+										</h6>
+									</div>
+									<div th:if="${eventsParticipantPast}" th:each="event : ${eventsParticipantPast}">
+										<div class="card d-flex flex-row justify-content-between align-items-center">
+											<div class="cardData d-flex gap-2">
+												<img th:src="${'../../' + event.image}" class="card-img-top"
+													alt="Imagen del evento">
+												<div class="eventData d-flex flex-column justify-content-evenly">
+													<div class="card-body-title">
+														<h6 class="card-title">
+															<a class="card-title"
+																th:href="@{'/event/detail/' + ${event.id}}"
+																th:text="${event.title}">Event title</a>
+														</h6>
+													</div>
+													<div class="card-body-text d-flex flex-row gap-5">
+														<div class="d-flex pt-3 align-items-center">
+															<i class="fas fa-calendar-alt fa-lg me-2"></i>
+															<p class="card-text"
+																th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">
+																Event date</p>
+														</div>
+														<div class="d-flex pt-3 align-items-center">
+															<i class="fa-solid fa-location-dot fa-lg me-2"></i>
+															<p class="card-text" th:text="${event.city}">Localidad</p>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="eventsOwner" class="content-section" style="display: none;">
+					<div class="accordion" id="accordionEventsOwnerFuture">
+						<div class="accordion-item mb-2">
+							<h2 class="accordion-header">
+								<button class="accordion-button text-body-bold" type="button" data-bs-toggle="collapse"
+									data-bs-target="#bodyEventsOwnerFuture" aria-expanded="true"
+									aria-controls="bodyEventsOwnerFuture"
+									th:text="#{accordion.title.events.future}">Eventos futuros
+								</button>
+							</h2>
+							<div id="bodyEventsOwnerFuture" class="accordion-collapse collapse show"
+								data-bs-parent="#accordionEventsOwnerFuture">
+								<div class="accordion-body d-flex flex-column gap-4">
+									<div th:if="${eventsOwnerFuture == null}">
+										<h6 class="text-body" th:text="#{accordion.text.eventsOwnerFuture.empty}"></h6>
+									</div>
+									<div th:if="${eventsOwnerFuture}" th:each="event : ${eventsOwnerFuture}">
+										<div class="card d-flex flex-row justify-content-between align-items-center">
+											<div class="cardData d-flex gap-2">
+												<img th:src="${'../../' + event.image}" class="card-img-top"
+													alt="Imagen del evento">
+												<div class="eventData d-flex flex-column justify-content-evenly">
+													<div class="card-body-title">
+														<h6 class="card-title">
+															<a class="card-title"
+																th:href="@{'/event/detail/' + ${event.id}}"
+																th:text="${event.title}">Event title</a>
+														</h6>
+													</div>
+													<div class="card-body-text d-flex flex-row gap-5">
+														<div class="d-flex pt-3 align-items-center">
+															<i class="fas fa-calendar-alt fa-lg me-2"></i>
+															<p class="card-text"
+																th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">
+																Event date</p>
+														</div>
+														<div class="d-flex pt-3 align-items-center">
+															<i class="fa-solid fa-location-dot fa-lg me-2"></i>
+															<p class="card-text" th:text="${event.city}">Localidad</p>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="cardActions d-flex justify-content-end gap-3">
+												<a class="btn btn-primary btn-sm rounded-pill text-light editEventBtn"
+													th:href="@{'/event/edit/' + ${event.id}}"
+													th:text="#{event.card.edit.button}">Editar</a>
+												<a class="btn btn-outline-danger btn-sm rounded-pill text-body deleteEventBtn"
+													th:href="@{'/event/delete/' + ${event.id}}"
+													th:text="#{event.card.delete.button}">Eliminar</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion" id="accordionEventsOwnerPast">
+						<div class="accordion-item mb-2">
+							<h2 class="accordion-header">
+								<button class="accordion-button text-body-bold collapsed" type="button"
+									data-bs-toggle="collapse" data-bs-target="#bodyEventsOwnerPast"
+									aria-expanded="false" aria-controls="bodyEventsOwnerPast"
+									th:text="#{accordion.title.events.past}">Eventos Pasados
+								</button>
+							</h2>
+							<div id="bodyEventsOwnerPast" class="accordion-collapse collapse"
+								data-bs-parent="#accordionEventsOwnerPast">
+								<div class="accordion-body d-flex flex-column gap-4">
+									<div th:if="${eventsOwnerPast == null}">
+										<h6 class="text-body" th:text="#{accordion.text.eventsOwnerPast.empty}"></h6>
+									</div>
+									<div th:if="${eventsOwnerPast}" th:each="event : ${eventsOwnerPast}">
+										<div class="card d-flex flex-row justify-content-between align-items-center">
+											<div class="cardData d-flex gap-2">
+												<img th:src="${'../../' + event.image}" class="card-img-top"
+													alt="Imagen del evento">
+												<div class="eventData d-flex flex-column justify-content-evenly">
+													<div class="card-body-title">
+														<h6 class="card-title">
+															<a class="card-title"
+																th:href="@{'/event/detail/' + ${event.id}}"
+																th:text="${event.title}">Event title</a>
+														</h6>
+													</div>
+													<div class="card-body-text d-flex flex-row gap-5">
+														<div class="d-flex pt-3 align-items-center">
+															<i class="fas fa-calendar-alt fa-lg me-2"></i>
+															<p class="card-text"
+																th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">
+																Event date</p>
+														</div>
+														<div class="d-flex pt-3 align-items-center">
+															<i class="fa-solid fa-location-dot fa-lg me-2"></i>
+															<p class="card-text" th:text="${event.city}">Localidad</p>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div id="eventsOwner" class="content-section" style="display: none;">
-					<div class="accordion" id="accordionEventsOwnerFuture">
-					  <div class="accordion-item mb-2">
-					    <h2 class="accordion-header">
-					      <button class="accordion-button text-body-bold" type="button" data-bs-toggle="collapse" data-bs-target="#bodyEventsOwnerFuture" aria-expanded="true" aria-controls="bodyEventsOwnerFuture"
-					      		th:text="#{accordion.title.events.future}">Eventos futuros
-					      </button>
-					    </h2>
-					    <div id="bodyEventsOwnerFuture" class="accordion-collapse collapse show" data-bs-parent="#accordionEventsOwnerFuture">
-					      <div class="accordion-body d-flex flex-column gap-4">
-					      	<div th:if="${eventsOwnerFuture == null}">
-					      		<h6 class="text-body" th:text="#{accordion.text.eventsOwnerFuture.empty}"></h6>
-					      	</div>
-					        <div th:if="${eventsOwnerFuture}" th:each="event : ${eventsOwnerFuture}">
-					        	<div class="card d-flex flex-row justify-content-between align-items-center">
-					        		<div class="cardData d-flex gap-2">
-					        			<img th:src="${'../../' + event.image}" class="card-img-top"
-											alt="Imagen del evento">
-					        			<div class="eventData d-flex flex-column justify-content-evenly">
-					        				<div class="card-body-title">
-												<h6 class="card-title">
-													<a class="card-title" th:href="@{'/event/detail/' + ${event.id}}" th:text="${event.title}">Event title</a>
-												</h6>
-											</div>
-											<div class="card-body-text d-flex flex-row gap-5">
-												<div class="d-flex pt-3 align-items-center">
-													<i class="fas fa-calendar-alt fa-lg me-2"></i>
-													<p class="card-text"
-														th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">
-														Event date</p>
-												</div>
-												<div class="d-flex pt-3 align-items-center">
-													<i class="fa-solid fa-location-dot fa-lg me-2"></i>
-													<p class="card-text" th:text="${event.city}">Localidad</p>
-												</div>
-											</div>
-					        			</div>
-					        		</div>
-					        		<div class="cardActions d-flex justify-content-end gap-3">
-										<a class="btn btn-primary btn-sm rounded-pill text-light editEventBtn"
-										   	th:href="@{'/event/edit/' + ${event.id}}"
-										   	th:text="#{event.card.edit.button}">Editar</a>
-										<a class="btn btn-outline-danger btn-sm rounded-pill text-body deleteEventBtn"
-											th:href="@{'/event/delete/' + ${event.id}}"
-											th:text="#{event.card.delete.button}">Eliminar</a>
-					        		</div>
-					        	</div>
-					        </div>
-					      </div>
-					    </div>
-					  </div>
-					  </div>
-					  <div class="accordion" id="accordionEventsOwnerPast">
-					  <div class="accordion-item mb-2">
-					    <h2 class="accordion-header">
-					      <button class="accordion-button text-body-bold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bodyEventsOwnerPast" aria-expanded="false" aria-controls="bodyEventsOwnerPast"
-					      		th:text="#{accordion.title.events.past}">Eventos Pasados
-					      </button>
-					    </h2>
-					    <div id="bodyEventsOwnerPast" class="accordion-collapse collapse" data-bs-parent="#accordionEventsOwnerPast">
-					      <div class="accordion-body d-flex flex-column gap-4">
-					      	<div th:if="${eventsOwnerPast == null}">
-					      		<h6 class="text-body" th:text="#{accordion.text.eventsOwnerPast.empty}"></h6>
-					      	</div>
-					        <div th:if="${eventsOwnerPast}" th:each="event : ${eventsOwnerPast}">
-					        	<div class="card d-flex flex-row justify-content-between align-items-center">
-					        		<div class="cardData d-flex gap-2">
-					        			<img th:src="${'../../' + event.image}" class="card-img-top"
-											alt="Imagen del evento">
-					        			<div class="eventData d-flex flex-column justify-content-evenly">
-					        				<div class="card-body-title">
-												<h6 class="card-title">
-													<a class="card-title" th:href="@{'/event/detail/' + ${event.id}}" th:text="${event.title}">Event title</a>
-												</h6>
-											</div>
-											<div class="card-body-text d-flex flex-row gap-5">
-												<div class="d-flex pt-3 align-items-center">
-													<i class="fas fa-calendar-alt fa-lg me-2"></i>
-													<p class="card-text"
-														th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')} + ' a las ' + ${#dates.format(event.eventDate, 'HH:mm')}">
-														Event date</p>
-												</div>
-												<div class="d-flex pt-3 align-items-center">
-													<i class="fa-solid fa-location-dot fa-lg me-2"></i>
-													<p class="card-text" th:text="${event.city}">Localidad</p>
-												</div>
-											</div>
-					        			</div>
-					        		</div>
-					        		<div class="cardActions d-flex justify-content-end gap-3">
-					        			<a class="btn btn-primary btn-sm rounded-pill text-ligth editEventBtn"
-										   	th:href="@{'/event/edit/' + ${event.id}}"
-										   	th:text="#{event.card.edit.button}">Editar</a>
-										<button class="btn btn-outline-danger btn-sm rounded-pill text-body deleteEventBtn"
-											th:data-event-id="${event.id}"
-											th:text="#{event.card.delete.button}"
-											th:attr="onclick='deleteEvent(' + ${event.id} + ')'" >Eliminar
-										</button>
-					        		</div>
-					        	</div>
-					        </div>
-					      </div>
-					    </div>
-					  </div>
-					  </div>
-			</div>
+
 		</div>
-		
-	</div>
 	</main>
 
 	<footer th:replace="fragments/common/footer :: footer"></footer>
-	
+
 	<script th:inline="javascript">
 
 	</script>
-	
-	<script type="text/javascript" src="../../../static/js/profile.js"
-		th:src="@{/js/profile.js}"></script>	
+
+	<script type="text/javascript" src="../../../static/js/profile.js" th:src="@{/js/profile.js}"></script>
 </body>
+
 </html>

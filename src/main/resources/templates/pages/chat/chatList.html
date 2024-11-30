@@ -41,7 +41,7 @@
 									<div class="cardData d-flex gap-2">
 										<div class="user-avatar">
 									        <img th:if="${chat.userTo.profileImage != null}"
-									             th:src="${'../../' + chat.userTo.profileImage}"
+									             th:src="${chat.userTo.profileImage}"
 									             alt="Imagen del usuario"
 									             class="profile-image">		        
 									        <div th:if="${chat.userTo.profileImage == null}"
@@ -125,7 +125,7 @@
 									<div class="cardData d-flex gap-2">
 										<div class="user-avatar">
 									        <img th:if="${chat.userTo.profileImage != null}"
-									             th:src="${'../../' + chat.userTo.profileImage}"
+									             th:src="${chat.userTo.profileImage}"
 									             alt="Imagen del usuario"
 									             class="profile-image">		        
 									        <div th:if="${chat.userTo.profileImage == null}"
@@ -189,7 +189,7 @@
 									<div class="cardData d-flex gap-2">
 										<div class="user-avatar">
 									        <img th:if="${chat.userTo.profileImage != null}"
-									             th:src="${'../../' + chat.userTo.profileImage}"
+									             th:src="${chat.userTo.profileImage}"
 									             alt="Imagen del usuario"
 									             class="profile-image">		        
 									        <div th:if="${chat.userTo.profileImage == null}"

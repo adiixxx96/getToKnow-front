@@ -52,7 +52,7 @@
 					<div class="user-container d-flex">
 						<div class="user-avatar">
 					        <img th:if="${eventOwner.profileImage != null}"
-					             th:src="${'../../' + eventOwner.profileImage}"
+					             th:src="${eventOwner.profileImage}"
 					             alt="Imagen del organizador"
 					             class="profile-image">		        
 					        <div th:if="${eventOwner.profileImage == null}"
@@ -177,7 +177,7 @@
 				            	<div class="top-comment d-flex flex-row flex-start align-items-center gap-2">
 				                	<div class="user-avatar">
 								        <img th:if="${comment.user.profileImage != null}"
-								             th:src="${'../../' + comment.user.profileImage}"
+								             th:src="${comment.user.profileImage}"
 								             alt="Imagen del usuario del comentario"
 								             class="profile-image sm">		        
 								        <div th:if="${comment.user.profileImage == null}"
@@ -201,7 +201,7 @@
 				                    	<div class="top-comment d-flex flex-row flex-start align-items-center gap-2">
 					                        <div class="user-avatar">
 										        <img th:if="${reply.user.profileImage != null}"
-										             th:src="${'../../' + reply.user.profileImage}"
+										             th:src="${reply.user.profileImage}"
 										             alt="Imagen del usuario de la respuesta"
 										             class="profile-image sm">		        
 										        <div th:if="${reply.user.profileImage == null}"
@@ -244,7 +244,7 @@
 					<div class="user-container d-flex">
 						<div class="user-avatar">
 					        <img th:if="${eventOwner.profileImage != null}"
-					             th:src="${'../../' + eventOwner.profileImage}"
+					             th:src="${eventOwner.profileImage}"
 					             alt="Imagen del organizador"
 					             class="profile-image">		        
 					        <div th:if="${eventOwner.profileImage == null}"
@@ -269,7 +269,7 @@
 	               		<div class="user-container d-flex mt-3">
 							<div class="user-avatar">
 						        <img th:if="${participant.profileImage != null}"
-						             th:src="${'../../' + participant.profileImage}"
+						             th:src="${participant.profileImage}"
 						             alt="Imagen del participante"
 						             class="profile-image">		        
 						        <div th:if="${participant.profileImage == null}"

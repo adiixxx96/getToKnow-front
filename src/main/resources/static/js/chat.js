@@ -68,7 +68,6 @@ function connectWebSocket() {
             if (messageData.type === "updateReadStatus") {
                 updateAllReadStatusInUI();
             } else {
-                // Si no es una actualización, es un mensaje nuevo
                 if (!messageData.read && messageData.userId !== userId) {
                     messageData.read = true;
                     stompClient.send("/app/chat.messageRead", {}, JSON.stringify(messageData));
@@ -82,7 +81,6 @@ function connectWebSocket() {
 
 // Send the message to the server
 function sendMessage(chatId, userId) {
-	//Validate message
 	const messageText = $('#message').val();
     if (!messageText.trim()) {
         alert("El mensaje no puede estar vacío.");
@@ -105,11 +103,10 @@ function sendMessage(chatId, userId) {
     $('#message').val('');
 }
 
-// Display the message in the container
+// Show message in message bubble
 function displayMessage(message) {
     const messageContainer = $('#message-container');
     
-    // Check if the message already exists using its ID
     let existingMessage = $(`#message-${message.id}`);
     
     // If the message doesn't exist, create a new one
@@ -137,7 +134,7 @@ function displayMessage(message) {
         messageContainer.append(messageBubbleContainer);
         
     } else {
-        // If the message already exists (we're only updating the read status)
+        // If the message already exists we must update read status
         if (message.userId === userId) {
             const readIcon = existingMessage.find('.message-info i');
             if (readIcon && message.read) {

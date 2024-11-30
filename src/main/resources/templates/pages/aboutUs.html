@@ -1,0 +1,40 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)"></head>
+
+<body class="with-menu">
+	<header th:replace="fragments/common/header :: header">
+	</header>
+
+	<main>
+		<h2 th:text="#{about.us.title}" class="text-body text-center section-title">Sobre Get To Know</h2>
+
+		<div id="aboutus-container" class="d-flex flex-column align-items-center">
+			<img src="../../images/aboutUs.jpeg" alt="Imagen de la creadora de Get To Know"
+				class="about-us">
+			<p class="text-body mt-4">
+				Soy Ada, la creadora de Get To Know. Soy originaria de Huesca, pero he vivido en muchos lugares como
+				Barcelona, Zaragoza, Granada, Australia y Reino Unido. Así nace Get To Know. En muchas de estas
+				ocasiones en las que he cambiado de ciudad o incluso de país, me he sentido un poco fuera de lugar.
+				Aunque hay ya algunas aplicaciones para conocer gente, muchas se centran en encontrar pareja o son
+				demasiado formales. Así que pensé, ¿y si hubiera una forma más natural y divertida de conocer gente
+				mientras exploro mi nuevo hogar?
+			</p>
+			<p class="text-body mt-2">
+				Ya que he estudiado desarrollo web, me puse manos a la obra para crear Get To Know, una comunidad donde
+				puedes publicar o unirte a planes variados: desde senderismo, tardes de juegos de mesa, una noche loca
+				de fiesta o un café después de comer. Podrás previamente ver quiénes serán tus compañeros e incluso
+				chatear con ellos, ¡así seguro que los nervios previos se esfuman!
+			</p>
+			<p class="text-body mt-2 mb-5">
+				Ya sea que busques hacer nuevos amigos o simplemente disfrutar de un rato haciendo algo diferente, aquí
+				encontrarás tu lugar.
+			</p>
+		</div>
+	</main>
+
+	<footer th:replace="fragments/common/footer :: footer"></footer>
+
+</body>
+
+</html>

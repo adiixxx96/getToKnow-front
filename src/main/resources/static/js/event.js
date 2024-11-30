@@ -62,7 +62,7 @@ $(document).ready(function() {
 
 	function updateSliderParticipants() {
 		var fromVal = participantsFrom.val() === '+100' ? 100 : participantsFrom.val();
-		var toVal = priceparticipantsTo.val() === '+100' ? 100 : participantsTo.val();
+		var toVal = participantsTo.val() === '+100' ? 100 : participantsTo.val();
 		participantsSlider.noUiSlider.set([fromVal, toVal]);
 	}
 
@@ -74,10 +74,9 @@ $(document).ready(function() {
   
 });
 
-//Current datetime
+//Calendar input
 var now = moment();
 var today = moment().startOf('day');
-//Calendar input
 $('input[name="eventDate"].dateInput').daterangepicker({
 	autoUpdateInput: false,
 	singleDatePicker: true,
@@ -190,30 +189,23 @@ $('.input-number').change(function() {
 	}
 });
 $(".input-number").keydown(function(e) {
-	// Permitir: backspace, delete, tab, escape, enter y .
 	if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
-		// Permitir: Ctrl+A, Command+A
 		(e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
-		// Permitir: home, end, left, right, down, up
 		(e.keyCode >= 35 && e.keyCode <= 40)) {
-		// solo permitir lo que es arriba
 		return;
 	}
-	// Asegurarse de que es un número y detener la pulsación de tecla
 	if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
 		e.preventDefault();
 	}
 });
 
-//Textarea check maximum reached
+//Textarea check maximum characters reached
 $(document).ready(function() {
-	//When page is loaded (edit event)
     var maxLength = $('#description').attr('maxlength');
     var currentLength = $('#description').val().length;
 
     $('#charCount').text(currentLength + ' / ' + maxLength + ' caracteres');
 
-    //When field is updated
     $('#description').on('input', function() {
         var maxLength = $(this).attr('maxlength');
         var currentLength = $(this).val().length;
@@ -241,10 +233,8 @@ $(document).ready(function() {
 	    var maxLength = $(this).attr('maxlength');
 	    var currentLength = $(this).val().length;
 	
-	    // Encuentra el contador correspondiente a este textarea
 	    $(this).closest('.reply-form').find('.charCountReply').text(currentLength + ' / ' + maxLength + ' caracteres');
 	
-	    // Limita el contenido del textarea al máximo permitido
 	    if (currentLength > maxLength) {
 	        $(this).val($(this).val().substring(0, maxLength));
 	    }
@@ -284,11 +274,9 @@ function selectTag(tagPill) {
 
 	var index = selectedTags.indexOf(tagId.toString());
 	if (index === -1) {
-		// Verificar si ya hay 5 tags seleccionadas
 		if (selectedTags.length >= 5) {
 			return; // Si ya hay 5, no agregar más
 		}
-		// Si no hay 5, agregar la nueva tag
 		selectedTags.push(tagId);
 	} else {
 		selectedTags.splice(index, 1);
@@ -296,7 +284,6 @@ function selectTag(tagPill) {
 
 	selectedTagsInput.value = selectedTags.join(',');
 
-	// Alternar la clase 'selected'
 	tagPill.classList.toggle('selected');
 }
 
@@ -452,12 +439,10 @@ function search(isFiltering = false) {
 	let searchData = {};
 	
 	if (isFiltering) {
-        // Reset to page 1 if filtering or resetting filters
         $('.page-item').removeClass('active');
         $('.page-item').eq(1).addClass('active');
     }
 	
-	//Page number
 	let activePage = $('.page-item.active .page-link').data('page');
 	searchData['page'] = activePage;
 	
@@ -598,7 +583,6 @@ function updateJoinEventButtons() {
 			}
 
             if (!isLogged || isMaxParticipantsReached || isUserAlreadyJoined) {
-                // Define tooltip content based on condition
                 if (!isLoggedIn) {
 					tooltipContent = "Debes iniciar sesión con tu usuario para poder apuntarte a un evento.";
                 } else if (isUserAlreadyJoined) {
@@ -607,7 +591,6 @@ function updateJoinEventButtons() {
                     tooltipContent = "Se ha alcanzado el número máximo de personas apuntadas.";
                 }
                 
-                // Update tooltip content and disable the button
                 updateTooltipContent(button, tooltipContent);
                 button.disabled = true;
                 button.classList.add('disabled');
@@ -673,18 +656,12 @@ function changePage(page) {
         updatePagination();
     }
 
-    // Update pagination buttons (prev/next)
     function updatePagination() {
         const currentPage = parseInt($('.page-item.active .page-link').data('page'));
-        
-        // Disable previous button if on first page
         $('#prevBtn').prop('disabled', currentPage === 1);
-        
-        // Disable next button if on last page
         $('#nextBtn').prop('disabled', currentPage === totalPages);
     }
 
-    // Handle previous button click
     function prevPage() {
         const currentPage = parseInt($('.page-item.active .page-link').data('page'));
         if (currentPage > 1) {
@@ -692,7 +669,6 @@ function changePage(page) {
         }
     }
 
-    // Handle next button click
     function nextPage() {
         const currentPage = parseInt($('.page-item.active .page-link').data('page'));
         if (currentPage < totalPages) {

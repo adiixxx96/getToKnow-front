@@ -231,3 +231,44 @@ button, a{
       cursor: default;
       text-decoration: none;
    }
+   
+/*About us and contact us*/
+#aboutus-container {
+  width: 70%;             
+  margin: 0 auto;
+}
+
+img.about-us {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#aboutus-container p {
+	font-size: 15px;
+}
+
+#contactUsForm input, #contactUsForm textarea {
+	background-color: transparent;
+	border: 1px solid #464F51;
+	box-sizing: border-box;
+	outline: none;
+}
+
+#contactUsForm input:focus, #contactUsForm textarea:focus { 
+	background-color: transparent;
+	border: 2px solid #0FF4C6;
+	box-sizing: border-box;
+	outline: none !important;
+	outline-width: 0 !important;
+	box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+}
+
+#contactUsForm textarea#description::placeholder {
+	color: #FFF;
+	filter: brightness(85%);
+}
+

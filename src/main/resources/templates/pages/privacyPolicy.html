@@ -1,0 +1,60 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)"></head>
+
+<body class="with-menu">
+	<header th:replace="fragments/common/header :: header">
+	</header>
+
+	<main>
+		<h2 th:text="#{privacy.title}" class="text-body text-center section-title">Política de privacidad</h2>
+
+		<div id="privacy-container" class="d-flex flex-column"
+			style="width: 70%; max-height: 370px; margin: 0 auto; overflow-y: scroll; padding: 20px; border: 1px solid #ddd;">
+			<p>En Get To Know nos comprometemos a proteger tu privacidad. Esta política explica cómo recopilamos, usamos
+				y protegemos tu información personal.</p>
+
+			<h6>1. Información que recopilamos</h6>
+			<p>Recopilamos información personal cuando te registras en nuestra plataforma, participas en actividades o
+				eventos, o nos contactas para obtener más información. La información que recopilamos puede incluir tu
+				nombre, dirección de correo electrónico, ubicación, intereses y otros detalles relevantes para brindarte
+				una mejor experiencia.</p>
+
+			<h6>2. Uso de la información</h6>
+			<p>Utilizamos la información personal que recopilamos para proporcionarte una plataforma eficiente y para
+				mejorar nuestros servicios. Esto incluye enviarte notificaciones sobre eventos, actividades y
+				actualizaciones importantes, así como personalizar tu experiencia en la plataforma.</p>
+
+			<h6>3. Protección de la información</h6>
+			<p>Tomamos medidas de seguridad razonables para proteger tu información personal contra accesos no
+				autorizados, divulgación, alteración o destrucción. Sin embargo, ninguna transmisión de datos por
+				internet es completamente segura, por lo que no podemos garantizar la seguridad absoluta.</p>
+
+			<h6>4. Compartir información</h6>
+			<p>En Get To Know no compartimos tu información personal con terceros sin tu consentimiento, salvo cuando
+				sea necesario para cumplir con la ley o para proteger nuestros derechos legales. También podemos
+				compartir información con nuestros proveedores de servicios que ayudan a operar la plataforma, pero
+				estos proveedores no están autorizados a usar tu información para otros fines.</p>
+
+			<h6>5. Tus derechos</h6>
+			<p>Tienes derecho a acceder, corregir, eliminar o restringir el uso de tu información personal en cualquier
+				momento. Si deseas ejercer cualquiera de estos derechos, puedes ponerte en contacto con nosotros a
+				través de los medios disponibles en la plataforma.</p>
+
+			<h6>6. Cambios en la política de privacidad</h6>
+			<p>Nos reservamos el derecho de actualizar esta política de privacidad en cualquier momento. Te
+				notificaremos sobre los cambios relevantes, y la nueva versión de la política entrará en vigor tan
+				pronto como se publique en la plataforma.</p>
+
+			<h6>7. Contacto</h6>
+			<p>Si tienes preguntas o inquietudes acerca de nuestra política de privacidad o cómo manejamos tu
+				información personal, no dudes en ponerte en contacto con nosotros a través de los canales disponibles
+				en la plataforma.</p>
+		</div>
+	</main>
+
+	<footer th:replace="fragments/common/footer :: footer"></footer>
+
+</body>
+
+</html>

@@ -258,7 +258,7 @@ public class EventController {
 
 		model.addAttribute("currentPage", params.getPage());
 
-		// *****************Inicio lógica filtros*****************
+		// *****************Start filter logic*****************
 
 		String body = params.getBody().trim();
 		int provinceId = params.getProvince();
@@ -275,8 +275,7 @@ public class EventController {
 		// Body
 		if (!body.isEmpty()) {
 
-			// Si va entrecomillado lo trataremos como búsqueda literal, sino como palabras
-			// sueltas
+			// If quoted, we will consider it as literal search. If not, as separate words
 			boolean isQuoted = body.startsWith("\"") && body.endsWith("\"");
 			List<String> words = new ArrayList<>();
 			if (isQuoted) {
@@ -361,7 +360,7 @@ public class EventController {
 					.type(FilterType.INTEGER_LIST).build());
 		}
 
-		// *****************Fin lógica filtros*****************
+		// *****************End filter logic*****************
 
 		if (!listElement.isEmpty()) {
 			GroupFilterBuilder mainGroupFilter = GroupFilter.builder().operator(Operator.AND);
@@ -515,7 +514,7 @@ public class EventController {
 
 		UserDTO user = (UserDTO) session.getAttribute("user");
 		if (user == null) {
-			// User not logued -> no permission to 
+			// User not logued -> no permission to create comment
 			return "redirect:/event/detail/" + commentData.getEventId();
 		}
 
@@ -639,7 +638,6 @@ public class EventController {
 		}
 		
 		//Check if it is allowed to have openChatButton for every user
-		
 		if (user != null) {
 			//Get blocks by user
 			List<BlockByUserDTO> blocks = new ArrayList<>();

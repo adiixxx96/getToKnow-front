@@ -39,7 +39,6 @@ buttons.forEach(function(button) {
 			}
 
             if (!isLogged || isMaxParticipantsReached || isUserAlreadyJoined) {
-                // Define tooltip content based on condition
                 if (!isLoggedIn) {
 					tooltipContent = "Debes iniciar sesión con tu usuario para poder apuntarte a un evento.";
                 } else if (isUserAlreadyJoined) {
@@ -48,7 +47,6 @@ buttons.forEach(function(button) {
                     tooltipContent = "Se ha alcanzado el número máximo de personas apuntadas.";
                 }
                 
-                // Update tooltip content and disable the button
                 updateTooltipContent(button, tooltipContent);
                 button.disabled = true;
                 button.classList.add('disabled');

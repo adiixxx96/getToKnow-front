@@ -1,5 +1,6 @@
 package com.adape.gtk.front.controller;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -184,6 +185,20 @@ public class UserController {
 		}
 
 		UserDTO userEdit = parseUserDataToUser(userData);
+		
+		//Convert profile image to base64 if uploaded
+	    if (userData.getProfileImage() != null && !userData.getProfileImage().isEmpty()) {
+	        try {
+	            byte[] imageBytes = userData.getProfileImage().getBytes();
+	            String base64Image = "data:image/" + getFileExtension(userData.getProfileImage().getOriginalFilename()) 
+	            + ";base64," + Base64.getEncoder().encodeToString(imageBytes);
+	            userEdit.setProfileImage(base64Image);
+	        } catch (IOException e) {
+	            log.error("Error converting image to base64", e);
+	            attr.addFlashAttribute("error", "Error al procesar la imagen.");
+	            return "redirect:/user/profile/";
+	        }
+	    }
 
 		ResponseMessage resp = userclient.edit(userEdit, user.getId());
 
@@ -656,13 +671,6 @@ public class UserController {
 			user.setFullname(oldUser.getFullname());
 		}
 
-		// Profile image
-		if (userData.getProfileImage() != null && !userData.getProfileImage().isBlank()) {
-			user.setProfileImage(userData.getProfileImage());
-		} else {
-			user.setProfileImage(null);
-		}
-
 		// Password
 		if (userData.getPassword() != null) {
 			user.setPassword(userData.getPassword());
@@ -705,6 +713,13 @@ public class UserController {
 		} else {
 			user.setRole(true);
 		}
+		
+		// Profile image
+		if (userData.getProfileImage() == null || userData.getProfileImage().isEmpty()) {
+			if (oldUser.getProfileImage() != null && !oldUser.getProfileImage().isEmpty()) {
+				user.setProfileImage(oldUser.getProfileImage());
+			}
+		}
 
 		return user;
 	}
@@ -733,6 +748,11 @@ public class UserController {
 	private String decodePassword(String encodedPassword) {
 		byte[] decodedBytes = Base64.getDecoder().decode(encodedPassword);
 		return new String(decodedBytes);
+	}
+	
+	private String getFileExtension(String filename) {
+	    String extension = filename.substring(filename.lastIndexOf(".") + 1);
+	    return extension.toLowerCase();
 	}
 
 }

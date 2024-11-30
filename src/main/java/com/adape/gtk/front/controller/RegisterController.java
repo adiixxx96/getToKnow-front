@@ -60,7 +60,6 @@ public class RegisterController {
             e.printStackTrace();
         }
 		
-		//Build user
 		UserDTO user = UserDTO.builder()
 				.fullname(fullname)
 				.email(email)

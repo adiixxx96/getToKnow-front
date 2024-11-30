@@ -135,11 +135,11 @@
 
 .flex-grow-1 {
 	flex-grow: 1;
-	margin-right: 50px; /* Espacio entre los inputs */
+	margin-right: 50px;
 }
 
 .flex-grow-1:last-child {
-	margin-right: 0; /* Elimina el margen derecho del último input */
+	margin-right: 0;
 }
 
 input[type="text"], textarea#description, select#province {

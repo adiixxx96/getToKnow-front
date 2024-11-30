@@ -6,20 +6,20 @@
 }
 
 #main-container {
-    width: 90%;
-    margin: 0 auto;
-    display: flex;
+	width: 90%;
+	margin: 0 auto;
+	display: flex;
 }
 
 .event-column-one {
-    flex: 0 0 18%;             
-    padding-right: 20px;
+	flex: 0 0 18%;
+	padding-right: 20px;
 }
 
 .event-column-two {
-    flex: 0 0 77%;             
-    padding-left: 20px;    
-    margin-bottom: 40px;    
+	flex: 0 0 77%;
+	padding-left: 20px;
+	margin-bottom: 40px;
 }
 
 .vertical-line {
@@ -41,24 +41,24 @@
 /* ******************** USER PERSONAL DATA ******************** */
 
 #personalDataContent {
-    position: relative;
+	position: relative;
 }
 
 .user-avatar .avatar-circle {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 100px;
+	width: 200px;
+	height: 200px;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 100px;
 }
 
 .user-avatar .profile-image {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    object-fit: cover;
+	width: 200px;
+	height: 200px;
+	border-radius: 50%;
+	object-fit: cover;
 }
 
 #userDataForm {
@@ -67,38 +67,39 @@
 }
 
 .form-actions {
-    position: absolute;
-    top: -60px;
-    right: -120px;
-    transform: translateX(-50%);
+	position: absolute;
+	top: -60px;
+	right: -120px;
+	transform: translateX(-50%);
 }
 
-.input-with-icon, .input-with-icon-right {
-    position: relative;
+.input-with-icon,
+.input-with-icon-right {
+	position: relative;
 }
 
 .input-with-icon input {
-    padding-left: 40px;
+	padding-left: 40px;
 }
 
 .input-with-icon-right input {
-    padding-right: 40px;
+	padding-right: 40px;
 }
 
 .input-with-icon i {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
+	position: absolute;
+	left: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
 }
 
 .input-with-icon-right i {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
 }
 
 #userDataForm label {
@@ -107,6 +108,13 @@
 
 #userDataForm i {
 	color: #0FF4C6;
+}
+
+#fakeInput {
+	background-color: transparent;
+	border: 1px solid #464F51;
+	box-sizing: border-box;
+	outline: none;
 }
 
 #userDataForm input {
@@ -128,36 +136,40 @@
 }
 
 #userDataForm input:disabled {
-    background-color: #f8f9fa;
-    color: #6c757d;
-    border: 1px solid #ced4da;
-    cursor: not-allowed;
+	background-color: #f8f9fa;
+	color: #6c757d;
+	border: 1px solid #ced4da;
+	cursor: not-allowed;
 }
 
 /* ******************** EVENTS JOINED & EVENTS CREATED ******************** */
 
-.accordion-item, .accordion-header, .accordion-body {
-    border: none !important;
-    box-shadow: none !important;
+.accordion-item,
+.accordion-header,
+.accordion-body {
+	border: none !important;
+	box-shadow: none !important;
 }
 
-.accordion-button, .accordion-button:not(.collapsed), .accordion-button:focus {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+.accordion-button,
+.accordion-button:not(.collapsed),
+.accordion-button:focus {
+	background-color: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
 }
 
 .accordion-button {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 1rem;
 }
 
 .accordion-button::after {
-    margin-left: 0 !important;
-    margin-right: 0.5rem;
-    flex-shrink: 0;
+	margin-left: 0 !important;
+	margin-right: 0.5rem;
+	flex-shrink: 0;
 }
 
 .card {
@@ -169,11 +181,11 @@
 }
 
 .cardData {
-    flex: 0 0 65%;             
+	flex: 0 0 65%;
 }
 
 .cardActions {
-    flex: 0 0 35%;                
+	flex: 0 0 35%;
 }
 
 .card img {

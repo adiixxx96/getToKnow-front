@@ -82,7 +82,7 @@
 											<div class="cardData d-flex gap-3">
 												<div class="user-avatar">
 													<img th:if="${user.profileImage != null}"
-														th:src="${'../../' + user.profileImage}"
+														th:src="${user.profileImage}"
 														alt="Imagen del usuario del comentario"
 														class="profile-image sm">
 													<div th:if="${user.profileImage == null}"
@@ -150,7 +150,7 @@
 											<div class="cardData d-flex gap-3">
 												<div class="user-avatar">
 													<img th:if="${user.profileImage != null}"
-														th:src="${'../../' + user.profileImage}"
+														th:src="${user.profileImage}"
 														alt="Imagen del usuario del comentario"
 														class="profile-image sm">
 													<div th:if="${user.profileImage == null}"
@@ -247,7 +247,7 @@
 														class="d-flex flex-row flex-start align-items-center gap-2">
 														<div class="user-avatar-sm">
 															<img th:if="${event.eventOwner.profileImage != null}"
-																th:src="${'../../' + event.eventOwner.profileImage}"
+																th:src="${event.eventOwner.profileImage}"
 																alt="Imagen del creador del evento"
 																class="profile-image sm">
 															<div th:if="${event.eventOwner.profileImage == null}"
@@ -329,7 +329,7 @@
 														class="d-flex flex-row flex-start align-items-center gap-2">
 														<div class="user-avatar-sm">
 															<img th:if="${event.eventOwner.profileImage != null}"
-																th:src="${'../../' + event.eventOwner.profileImage}"
+																th:src="${event.eventOwner.profileImage}"
 																alt="Imagen del creador del evento"
 																class="profile-image sm">
 															<div th:if="${event.eventOwner.profileImage == null}"
@@ -373,7 +373,7 @@
 								<div class="cardData d-flex gap-3">
 									<div class="user-avatar">
 										<img th:if="${block.blocked.profileImage != null}"
-											th:src="${'../../' + block.blocked.profileImage}"
+											th:src="${block.blocked.profileImage}"
 											alt="Imagen del usuario bloqueado" class="profile-image sm">
 										<div th:if="${block.blocked.profileImage == null}"
 											class="avatar-circle sm bg-secondary-light text-light-bold"
@@ -471,7 +471,7 @@
 								<div class="cardData d-flex gap-3">
 									<div class="user-avatar">
 										<img th:if="${deregistration.user.profileImage != null}"
-											th:src="${'../../' + deregistration.user.profileImage}"
+											th:src="${deregistration.user.profileImage}"
 											alt="Imagen del usuario desregistrado"
 											class="profile-image sm">
 										<div th:if="${deregistration.user.profileImage == null}"

@@ -20,7 +20,7 @@
 				<div class="d-flex align-items-center">
 					<div class="user-avatar-chat">
 						<img th:if="${chat.userTo.profileImage != null}"
-							th:src="${'../../' + chat.userTo.profileImage}"
+							th:src="${chat.userTo.profileImage}"
 							alt="Imagen del organizador" class="profile-image">
 						<div th:if="${chat.userTo.profileImage == null}"
 							class="avatar-circle bg-secondary-light text-light-bold"

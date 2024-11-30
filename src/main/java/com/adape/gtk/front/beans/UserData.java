@@ -1,5 +1,7 @@
 package com.adape.gtk.front.beans;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +19,7 @@ public class UserData {
 	
 	private String fullname;
 	
-	private String profileImage;
+	private MultipartFile profileImage;
 	
 	private String password;
 

@@ -1,0 +1,39 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/common/head :: head(extraCss=~{::link}, extraJs=null, extraMeta=null)"></head>
+
+<body class="with-menu">
+	<header th:replace="fragments/common/header :: header">
+	</header>
+
+	<main>
+		<div id="messages" class="w-90" style="margin:0 auto;">
+			<div th:replace="fragments/common/messages"></div>
+		</div>
+		
+		<h2 th:text="#{contact.title}" class="text-body text-center section-title" style="margin-top: 40px;">Contáctanos</h2>
+		<form id="contactUsForm" th:action="@{/contactUs/send}" method="post" class="d-flex flex-column align-items-center" style="width:70%;margin:0 auto;">
+			<div class="mb-3 w-100">
+				<label for="fullname" class="form-label text-body mb-1" th:text="#{form.label.fullname}">Nombre y
+					apellidos</label>
+				<input type="text" class="form-control rounded text-body" id="fullname" name="fullname">
+			</div>
+			<div class="mb-4 w-100">
+				<label for="email" class="form-label text-body mb-1" th:text="#{form.label.email}">Email</label>
+				<input type="email" class="form-control rounded text-body" id="email" name="email">
+			</div>
+			<div class="mb-4 w-100">
+				<textarea rows="5" class="form-control rounded text-body" id="message" name="message"
+					th:placeholder="#{contact.message}" style="font-size: 14px;">Escribe aquí tu mensaje</textarea>
+			</div>
+			<button type="submit" class="btn btn-secondary rounded-pill sendBtn mb-5"
+				th:text="#{form.button.send}" style="width:120px;">Enviar</button>
+		</form>
+
+	</main>
+
+	<footer th:replace="fragments/common/footer :: footer"></footer>
+
+</body>
+
+</html>

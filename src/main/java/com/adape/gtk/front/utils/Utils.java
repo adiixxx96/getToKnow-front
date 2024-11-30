@@ -29,11 +29,9 @@ public class Utils {
 
         Calendar birthCalendar = Calendar.getInstance();
         birthCalendar.setTimeInMillis(birthDate.getTime());
-
         Calendar today = Calendar.getInstance();
 
         int age = today.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR);
-
         if (today.get(Calendar.DAY_OF_YEAR) < birthCalendar.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
