@@ -212,12 +212,11 @@ public class ChatController {
 			literals = resp.getResults();
 		} else {
 			log.error("Error getting literals");
-			return "/pages/chat/chatList";
 		}
 		
 		model.addAttribute("literals", literals);
 	
-		return "/pages/chat/chatList";
+		return "pages/chat/chatList";
 	}
 	
 	@SuppressWarnings("unchecked")
