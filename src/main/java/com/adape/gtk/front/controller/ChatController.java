@@ -120,7 +120,7 @@ public class ChatController {
 			chats = resp.getResults();
 		} else {
 			log.error("Error getting chats");
-			return "/pages/chat/chatList";
+			return "pages/chat/chatList";
 		}
 		
 		//Set the user that is not you to UserTo

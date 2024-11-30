@@ -227,7 +227,7 @@ public class EventController {
 			event.setParticipantsNumber(eventParticipants.size());
 		}
 
-		return "/pages/event/eventList";
+		return "pages/event/eventList";
 	}
 
 	@RequestMapping(value = "/search", method = { RequestMethod.GET, RequestMethod.POST })
