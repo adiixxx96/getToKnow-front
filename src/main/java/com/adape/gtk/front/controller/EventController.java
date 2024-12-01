@@ -45,6 +45,7 @@ import com.adape.gtk.core.client.beans.FilterElements.OperatorType;
 import com.adape.gtk.core.client.beans.GroupFilter;
 import com.adape.gtk.core.client.beans.LiteralDTO;
 import com.adape.gtk.core.client.beans.LiteralTypeEnum;
+import com.adape.gtk.core.client.beans.NotificationDTO;
 import com.adape.gtk.core.client.beans.GroupFilter.GroupFilterBuilder;
 import com.adape.gtk.core.client.beans.GroupFilter.Operator;
 import com.adape.gtk.core.client.beans.Page;
@@ -63,6 +64,7 @@ import com.adape.gtk.core.client.service.CategoryIntService;
 import com.adape.gtk.core.client.service.CommentIntService;
 import com.adape.gtk.core.client.service.EventIntService;
 import com.adape.gtk.core.client.service.LiteralIntService;
+import com.adape.gtk.core.client.service.NotificationIntService;
 import com.adape.gtk.core.client.service.ReportByEventIntService;
 import com.adape.gtk.core.client.service.TagIntService;
 import com.adape.gtk.front.beans.CommentData;
@@ -93,6 +95,8 @@ public class EventController {
 	private LiteralIntService literalclient;
 	@Autowired
 	private ReportByEventIntService reportclient;
+	@Autowired 
+	private NotificationIntService notificationclient;
 
 
 	@RequestMapping(value = "/list")
@@ -117,6 +121,13 @@ public class EventController {
 		model.addAttribute("isLogged", isLogged);
 		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("initialLoad", true);
+		
+		//If logged, get notifications
+        if (isLogged) {
+        	List<NotificationDTO> notifications = new ArrayList<>();
+        	notifications = getNotificationsByUser(user.getId());       	
+        	model.addAttribute("notifications", notifications);
+        }
 
 		// Get provinces to list in filter
 		model.addAttribute("provinces", ProvinceEnum.values());
@@ -246,6 +257,13 @@ public class EventController {
 		model.addAttribute("isLogged", isLogged);
 
 		model.addAttribute("initialLoad", false);
+		
+		//If logged, get notifications
+        if (isLogged) {
+        	List<NotificationDTO> notifications = new ArrayList<>();
+        	notifications = getNotificationsByUser(user.getId());       	
+        	model.addAttribute("notifications", notifications);
+        }
 
 		FilterBuilder filter = Filter.builder();
 		int pageNo = params.getPage() - 1;
@@ -428,6 +446,14 @@ public class EventController {
 
 		model.addAttribute("isLogged", isLogged);
 		model.addAttribute("isAdmin", isAdmin);
+		
+		//If logged, get notifications
+        if (isLogged) {
+        	List<NotificationDTO> notifications = new ArrayList<>();
+        	notifications = getNotificationsByUser(user.getId());       	
+        	model.addAttribute("notifications", notifications);
+        }
+
 
 		// Get provinces
 		model.addAttribute("provinces", ProvinceEnum.values());
@@ -553,6 +579,14 @@ public class EventController {
 		model.addAttribute("isLogged", isLogged);
 		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("user", user);
+		
+		//If logged, get notifications
+        if (isLogged) {
+        	List<NotificationDTO> notifications = new ArrayList<>();
+        	notifications = getNotificationsByUser(user.getId());       	
+        	model.addAttribute("notifications", notifications);
+        }
+
 
 		// Get event with relations
 		FilterBuilder filter = Filter.builder();
@@ -819,6 +853,15 @@ public class EventController {
 						log.info("User removed from the event list as it was previously deregistered");
 					}
 				}
+				
+				//Get event owner for notification
+				UserDTO eventOwner = null;
+				for (UserByEventDTO ube : usersList) {
+					if (ube.getOwner()) {
+						eventOwner = ube.getUser();
+						break;
+					}
+				}
 
 				// Add new user and edit event
 				usersList.add(UserByEventDTO.builder().user(UserDTO.builder().id(user.getId()).build())
@@ -827,6 +870,15 @@ public class EventController {
 
 				event.setUsers(usersList);
 				eventclient.edit(event, user.getId());
+				
+				//Create notification of user joining event
+				String message = "<p>" + user.getFullname() + " se ha apuntado a tu evento <a href='/event/detail/" + eventId + "'>" + event.getTitle() + "</a><p>";
+				NotificationDTO notification = NotificationDTO.builder().user(eventOwner)
+						.notification(message)
+						.isRead(false)
+						.creationDate(new Timestamp(System.currentTimeMillis()))
+						.build();		
+				notificationclient.create(notification, user.getId());
 
 			} else {
 				log.error("Error joining event");
@@ -874,6 +926,15 @@ public class EventController {
 				List<UserByEventDTO> usersList = new ArrayList<UserByEventDTO>();
 				if (event.getUsers() != null)
 					usersList = event.getUsers();
+				
+				//Get eventOwner for notification
+				UserDTO eventOwner = null;
+				for (UserByEventDTO ube : usersList) {
+					if (ube.getOwner()) {
+						eventOwner = ube.getUser();
+						break;
+					}
+				}
 
 				// Remove the user who is disjoining
 				Timestamp registrationDate = new Timestamp(System.currentTimeMillis());
@@ -895,6 +956,15 @@ public class EventController {
 
 				event.setUsers(usersList);
 				eventclient.edit(event, user.getId());
+				
+				//Create notification of user disjoining event
+				String message = "<p>" + user.getFullname() + " se ha desapuntado de tu evento <a href='/event/detail/" + eventId + "'>" + event.getTitle() + "</a><p>";
+				NotificationDTO notification = NotificationDTO.builder().user(eventOwner)
+						.notification(message)
+						.isRead(false)
+						.creationDate(new Timestamp(System.currentTimeMillis()))
+						.build();		
+				notificationclient.create(notification, user.getId());
 
 			} else {
 				log.error("Error disjoining event");
@@ -932,6 +1002,13 @@ public class EventController {
 
 		model.addAttribute("isLogged", isLogged);
 		model.addAttribute("isAdmin", isAdmin);
+		
+		//If logged, get notifications
+        if (isLogged) {
+        	List<NotificationDTO> notifications = new ArrayList<>();
+        	notifications = getNotificationsByUser(user.getId());       	
+        	model.addAttribute("notifications", notifications);
+        }
 		
 		// Get event to edit
 		FilterBuilder filter = Filter.builder();
@@ -1082,6 +1159,23 @@ public class EventController {
 		if (!respReport.isOK()) {
 			return ResponseEntity.internalServerError().body("Error when creating report");
 		}
+		
+		//Create notification of report
+		EventDTO event = getEventByIdWithUsers(eventId);
+		UserDTO eventOwner = null;
+		for (UserByEventDTO ube : event.getUsers()) {
+			if (ube.getOwner()) {
+				eventOwner = ube.getUser();
+				break;
+			}
+		}	
+		String message = "<p>" +  user.getFullname() + " ha reportado tu evento <a href='event/detail/" + eventId + "'>" + event.getTitle() + "</a>. Será revisado por un administrador.<p>";
+		NotificationDTO notification = NotificationDTO.builder().user(eventOwner)
+				.notification(message)
+				.isRead(false)
+				.creationDate(new Timestamp(System.currentTimeMillis()))
+				.build();		
+		notificationclient.create(notification, user.getId());
 		
 		return ResponseEntity.ok("Report event ok");
 	    
@@ -1287,6 +1381,59 @@ public class EventController {
 			}
 			
 			return event;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private EventDTO getEventByIdWithUsers(Integer id) {
+			FilterBuilder filter = Filter.builder();
+			filter.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build());
+			filter.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build()));
+			filter.showParameters(List.of("users.user"));
+			filter.groupFilter(GroupFilter.builder().operator(GroupFilter.Operator.AND)
+					.filterElements(Arrays.asList(FilterElements.builder().key("id").value(id)
+						.type(FilterElements.FilterType.INTEGER).operator(FilterElements.OperatorType.EQUALS).build()))
+						.build());
+			
+			ResponseMessage response = eventclient.get(filter.build(), 0);
+			EventDTO event = null;
+			if (response.isOK()) {
+				Response<EventDTO> res = (Response<EventDTO>) response.getMessage();
+				event = res.getResults().get(0);
+			}
+			
+			return event;
+	}
+	
+private List<NotificationDTO> getNotificationsByUser(Integer userId) {
+		
+		Filter filter = Filter.builder()
+    			.groupFilter(GroupFilter.builder()
+    					.operator(GroupFilter.Operator.AND)
+    					.filterElements(Arrays.asList(
+    							FilterElements.builder()
+    							.key("isRead")
+    							.value(false)
+    							.type(FilterElements.FilterType.BOOLEAN)
+    							.operator(FilterElements.OperatorType.EQUALS).build(),
+		    					FilterElements.builder()
+								.key("user.id")
+								.value(userId)
+								.type(FilterElements.FilterType.INTEGER)
+								.operator(FilterElements.OperatorType.EQUALS).build()))
+    					.build())
+    			.showParameters(List.of("user"))
+    			.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
+    			.sorting(List.of(Sorting.builder().field("creationDate").order(Order.DESC).build()))
+    			.build();
+        
+        ResponseMessage response = notificationclient.get(filter, 0);
+        List<NotificationDTO> notifications = new ArrayList<>();
+		if (response.isOK()) {
+			Response<NotificationDTO> resp = (Response<NotificationDTO>) response.getMessage();
+			notifications = resp.getResults();
+		}
+		
+		return notifications;
 	}
 	
 

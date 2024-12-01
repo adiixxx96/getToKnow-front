@@ -29,6 +29,7 @@ import com.adape.gtk.core.client.beans.Filter.FilterBuilder;
 import com.adape.gtk.core.client.beans.FilterElements;
 import com.adape.gtk.core.client.beans.GroupFilter;
 import com.adape.gtk.core.client.beans.LiteralDTO;
+import com.adape.gtk.core.client.beans.NotificationDTO;
 import com.adape.gtk.core.client.beans.Page;
 import com.adape.gtk.core.client.beans.ReportByEventDTO;
 import com.adape.gtk.core.client.beans.Response;
@@ -40,6 +41,7 @@ import com.adape.gtk.core.client.beans.UserByEventDTO;
 import com.adape.gtk.core.client.service.BlockByUserIntService;
 import com.adape.gtk.core.client.service.DeregistrationByUserIntService;
 import com.adape.gtk.core.client.service.EventIntService;
+import com.adape.gtk.core.client.service.NotificationIntService;
 import com.adape.gtk.core.client.service.ReportByEventIntService;
 import com.adape.gtk.core.client.service.UserIntService;
 import com.adape.gtk.front.beans.UserData;
@@ -64,6 +66,8 @@ public class UserController {
 	private ReportByEventIntService reportclient;
 	@Autowired
 	private DeregistrationByUserIntService deregistrationclient;
+	@Autowired 
+	private NotificationIntService notificationclient;
 
 	@SuppressWarnings("unchecked")
 	@GetMapping("/profile/")
@@ -90,6 +94,13 @@ public class UserController {
 		model.addAttribute("isLogged", isLogged);
 		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("user", user);
+		
+		//If logged, get notifications
+        if (isLogged) {
+        	List<NotificationDTO> notifications = new ArrayList<>();
+        	notifications = getNotificationsByUser(user.getId());       	
+        	model.addAttribute("notifications", notifications);
+        }
 
 		// Format birthDate
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -245,6 +256,14 @@ public class UserController {
 		model.addAttribute("isLogged", isLogged);
 		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("user", user);
+		
+		//If logged, get notifications
+        if (isLogged) {
+        	List<NotificationDTO> notifications = new ArrayList<>();
+        	notifications = getNotificationsByUser(user.getId());       	
+        	model.addAttribute("notifications", notifications);
+        }
+
 
 		// Get users lists - active and inactive
 		List<UserDTO> usersList = new ArrayList<>();
@@ -753,6 +772,38 @@ public class UserController {
 	private String getFileExtension(String filename) {
 	    String extension = filename.substring(filename.lastIndexOf(".") + 1);
 	    return extension.toLowerCase();
+	}
+	
+private List<NotificationDTO> getNotificationsByUser(Integer userId) {
+		
+		Filter filter = Filter.builder()
+    			.groupFilter(GroupFilter.builder()
+    					.operator(GroupFilter.Operator.AND)
+    					.filterElements(Arrays.asList(
+    							FilterElements.builder()
+    							.key("isRead")
+    							.value(false)
+    							.type(FilterElements.FilterType.BOOLEAN)
+    							.operator(FilterElements.OperatorType.EQUALS).build(),
+		    					FilterElements.builder()
+								.key("user.id")
+								.value(userId)
+								.type(FilterElements.FilterType.INTEGER)
+								.operator(FilterElements.OperatorType.EQUALS).build()))
+    					.build())
+    			.showParameters(List.of("user"))
+    			.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
+    			.sorting(List.of(Sorting.builder().field("creationDate").order(Order.DESC).build()))
+    			.build();
+        
+        ResponseMessage response = notificationclient.get(filter, 0);
+        List<NotificationDTO> notifications = new ArrayList<>();
+		if (response.isOK()) {
+			Response<NotificationDTO> resp = (Response<NotificationDTO>) response.getMessage();
+			notifications = resp.getResults();
+		}
+		
+		return notifications;
 	}
 
 }

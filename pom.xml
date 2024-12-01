@@ -15,7 +15,7 @@
 	<description>Web project getToKnow</description>
 	<properties>
 		<java.version>17</java.version>
-		<gtk-core.version>1.0.2</gtk-core.version>
+		<gtk-core.version>1.0.3</gtk-core.version>
 		<maven.compiler.release>17</maven.compiler.release>
 		<spring-cloud-starter.version>3.0.4</spring-cloud-starter.version>
 		<log4j2.version>2.17.0</log4j2.version>

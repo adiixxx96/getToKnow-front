@@ -31,6 +31,7 @@ import com.adape.gtk.core.client.beans.GroupFilter;
 import com.adape.gtk.core.client.beans.LiteralDTO;
 import com.adape.gtk.core.client.beans.LiteralTypeEnum;
 import com.adape.gtk.core.client.beans.MessageDTO;
+import com.adape.gtk.core.client.beans.NotificationDTO;
 import com.adape.gtk.core.client.beans.Page;
 import com.adape.gtk.core.client.beans.Response;
 import com.adape.gtk.core.client.beans.ResponseMessage;
@@ -42,6 +43,7 @@ import com.adape.gtk.core.client.service.BlockByUserIntService;
 import com.adape.gtk.core.client.service.ChatIntService;
 import com.adape.gtk.core.client.service.LiteralIntService;
 import com.adape.gtk.core.client.service.MessageIntService;
+import com.adape.gtk.core.client.service.NotificationIntService;
 import com.adape.gtk.front.utils.Utils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -64,6 +66,8 @@ public class ChatController {
 	private BlockByUserIntService blockclient;
 	@Autowired
 	private MessageIntService messageclient;
+	@Autowired 
+	private NotificationIntService notificationclient;
 
 	@RequestMapping(value = "/list")
 	public String chatListController(Model model, HttpSession session, HttpServletRequest request) {
@@ -88,6 +92,13 @@ public class ChatController {
 		model.addAttribute("isLogged", isLogged);
 		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("user", user);
+		
+		//If logged, get notifications
+        if (isLogged) {
+        	List<NotificationDTO> notifications = new ArrayList<>();
+        	notifications = getNotificationsByUser(user.getId());       	
+        	model.addAttribute("notifications", notifications);
+        }
 
 		Filter filter = Filter.builder()
     			.groupFilter(GroupFilter.builder()
@@ -242,6 +253,13 @@ public class ChatController {
 		model.addAttribute("isLogged", isLogged);
 		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("user", user);
+		
+		//If logged, get notifications
+        if (isLogged) {
+        	List<NotificationDTO> notifications = new ArrayList<>();
+        	notifications = getNotificationsByUser(user.getId());       	
+        	model.addAttribute("notifications", notifications);
+        }
 
 		// Get chat with relations
 		FilterBuilder filter = Filter.builder();
@@ -310,7 +328,7 @@ public class ChatController {
 		FilterBuilder filter = Filter.builder();
 		filter.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build());
 		filter.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build()));
-		filter.showParameters(List.of(""));
+		filter.showParameters(List.of("user1", "user2"));
 		filter.groupFilter(GroupFilter.builder().operator(GroupFilter.Operator.AND)
 				.filterElements(Arrays.asList(FilterElements.builder().key("id").value(chatId)
 						.type(FilterElements.FilterType.INTEGER).operator(FilterElements.OperatorType.EQUALS).build()))
@@ -332,6 +350,15 @@ public class ChatController {
 		chat.setStatus(true);
 		
 		chatclient.edit(chat, user.getId());
+		
+		//Create notification of chat accepted
+		String message = "<p>" +  chat.getUser2().getFullname() + " ha aceptado tu <a href='/chat/list'>solicitud de chat</a>.<p>";
+		NotificationDTO notification = NotificationDTO.builder().user(UserDTO.builder().id(chat.getUser1().getId()).build())
+				.notification(message)
+				.isRead(false)
+				.creationDate(new Timestamp(System.currentTimeMillis()))
+				.build();		
+		notificationclient.create(notification, user.getId());
 		
 		return "redirect:/chat/detail/" + chatId;
 		
@@ -410,6 +437,15 @@ public class ChatController {
 				chatclient.edit(chat, user.getId());			
 			}		
 		}
+		
+		//Create notification of chat request
+		String message = "<p>Tienes una nueva <a href='/chat/list'>solicitud de chat</a> de " +  user.getFullname() + ".<p>";
+		NotificationDTO notification = NotificationDTO.builder().user(UserDTO.builder().id(userToId).build())
+				.notification(message)
+				.isRead(false)
+				.creationDate(new Timestamp(System.currentTimeMillis()))
+				.build();		
+		notificationclient.create(notification, user.getId());
 			
 		return "redirect:/chat/detail/" + chat.getId();
 		
@@ -429,7 +465,7 @@ public class ChatController {
 		FilterBuilder filter = Filter.builder();
 		filter.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build());
 		filter.sorting(List.of(Sorting.builder().field("id").order(Order.DESC).build()));
-		filter.showParameters(List.of(""));
+		filter.showParameters(List.of("user1","user2"));
 		filter.groupFilter(GroupFilter.builder().operator(GroupFilter.Operator.AND)
 				.filterElements(Arrays.asList(FilterElements.builder().key("id").value(chatId)
 						.type(FilterElements.FilterType.INTEGER).operator(FilterElements.OperatorType.EQUALS).build()))
@@ -455,6 +491,15 @@ public class ChatController {
 			attr.addFlashAttribute("error", Utils.message("chat.edit.error", resp.getMessage().toString()));
 		} else {
 			attr.addFlashAttribute("success", Utils.message("chat.edit.ok"));
+			
+			//Create notification of chat rejected
+			String message = "<p>" +  chat.getUser2().getFullname() + " ha rechazado tu <a href='/chat/list'>solicitud de chat</a>.<p>";
+			NotificationDTO notification = NotificationDTO.builder().user(UserDTO.builder().id(chat.getUser1().getId()).build())
+					.notification(message)
+					.isRead(false)
+					.creationDate(new Timestamp(System.currentTimeMillis()))
+					.build();		
+			notificationclient.create(notification, user.getId());
 		}
 		
 		return "redirect:/chat/list/";
@@ -506,8 +551,49 @@ public class ChatController {
 			return ResponseEntity.internalServerError().body("Error when creating block");
 		}
 		
+		//Create notification of block
+		String message = "<p>" +  user.getFullname() + " te ha bloqueado. El bloqueo será revisado por un administrador.<p>";
+		NotificationDTO notification = NotificationDTO.builder().user(UserDTO.builder().id(userId).build())
+				.notification(message)
+				.isRead(false)
+				.creationDate(new Timestamp(System.currentTimeMillis()))
+				.build();		
+		notificationclient.create(notification, user.getId());
+		
 		return ResponseEntity.ok("Block user ok");
 	    
+	}
+	
+private List<NotificationDTO> getNotificationsByUser(Integer userId) {
+		
+		Filter filter = Filter.builder()
+    			.groupFilter(GroupFilter.builder()
+    					.operator(GroupFilter.Operator.AND)
+    					.filterElements(Arrays.asList(
+    							FilterElements.builder()
+    							.key("isRead")
+    							.value(false)
+    							.type(FilterElements.FilterType.BOOLEAN)
+    							.operator(FilterElements.OperatorType.EQUALS).build(),
+		    					FilterElements.builder()
+								.key("user.id")
+								.value(userId)
+								.type(FilterElements.FilterType.INTEGER)
+								.operator(FilterElements.OperatorType.EQUALS).build()))
+    					.build())
+    			.showParameters(List.of("user"))
+    			.page(Page.builder().pageNo(0).pageSize(Integer.MAX_VALUE).build())
+    			.sorting(List.of(Sorting.builder().field("creationDate").order(Order.DESC).build()))
+    			.build();
+        
+        ResponseMessage response = notificationclient.get(filter, 0);
+        List<NotificationDTO> notifications = new ArrayList<>();
+		if (response.isOK()) {
+			Response<NotificationDTO> resp = (Response<NotificationDTO>) response.getMessage();
+			notifications = resp.getResults();
+		}
+		
+		return notifications;
 	}
 	
 }

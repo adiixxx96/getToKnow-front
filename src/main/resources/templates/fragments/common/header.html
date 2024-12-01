@@ -1,59 +1,92 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="fragments/common/head :: head"></head>
 
 <header id="header" th:fragment="header">
 	<nav class="navbar navbar-expand-lg bg-body">
-  		<div class="container-fluid w-90 d-flex flex-row justify-content-between align-items-center">
-   			 <a href="/" class="navbar-brand text-light">
-      			<img src="../../images/logo-icon-light.png" alt="Logo" width="50" height="50" class="d-inline-block">
-      			Get To Know
-    		</a>
-    	
-<!--     	Botón mostrado si el usuario no está en el listado de eventos -->
-    	<a th:if="${requestURI != '/event/list/'}" href="/event/list/" class="btn btn-link text-decoration-none text-light">
-    		<span th:text="#{header.search.button}">Explora todos los eventos</span>
-    		<i class="fa-solid fa-magnifying-glass ms-1" style="color: #ffffff;"></i>
-  		</a> 		
-<!--   		Botón mostrado si el usuario no está en la home -->
-<!-- 		<a th:if="${requestURI != '/'}" href="/" class="btn btn-outline-secondary btn-sm rounded-pill text-light ms-auto homeButton"> -->
-<!-- 			<i class="fa-solid fa-house ms-1" style="color: #ffffff;"></i> -->
-<!--     		<span th:text="#{header.home.button}">Inicio</span> -->
-<!--   		</a> -->
-  		
-  		<div>
-    	<div id="navbarNotLoggedContent" class="d-flex flex-row justify-content-end">
-<!--     		Botones mostrados si el usuario no está logueado -->
-      		<a th:if="${!isLogged}" href="/login/" class="btn btn-primary btn-sm rounded-pill notLoggedButton" 
-      		th:text="#{header.login.button}">Inicia sesión</a>
-      		<a th:if="${!isLogged}" href="/register/" class="btn btn-primary btn-sm rounded-pill notLoggedButton" 
-      		th:text="#{header.register.button}">Regístrate</a>
-      	</div>
-      	
-      	<div id="navbarLoggedContent" class="d-flex flex-row justify-content-evenly">
-<!--       		Botón mostrado si el usuario es admin -->
-			<a th:if="${isAdmin}" href="/user/admin/" class="btn btn-outline-primary btn-sm rounded-circle" 
-			data-toggle="tooltip" data-placement="bottom" th:title="#{header.admin.tooltip}">
-				<i class="fa-solid fa-gear fa-lg" style="color: #ffffff;"></i>
-  			</a>
-      		
-<!--       		Botones mostrados si el usuario está logueado     -->
-			<a th:if="${isLogged}" class="btn btn-outline-primary btn-sm rounded-circle">
-				<i class="fa-solid fa-bell fa-lg" style="color: #ffffff;"></i>
-  			</a>
-  			<a th:if="${isLogged}" href="/chat/list/" class="btn btn-outline-primary btn-sm rounded-circle" 
-			data-toggle="tooltip" data-placement="bottom" th:title="#{header.chats.tooltip}">
-				<i class="fa-solid fa-comments fa-lg" style="color: #ffffff;"></i>
-  			</a>
-  			<a th:if="${isLogged}" href="/user/profile/" class="btn btn-outline-primary btn-sm align-content-center rounded-pill text-light personalAreaButton">
-				<i class="fa-solid fa-user fa-lg ms-1" style="color: #ffffff;"></i>
-    		<span th:text="#{header.personal.area.button}">Area personal</span>
-    		</a>
-    		<a th:if="${isLogged}" href="/logout/" class="btn btn-link align-content-center text-decoration-none btn-sm text-disabled">
-    			<span th:text="#{header.logout.button}">Cerrar sesión</span>
-  			</a>			
-    	</div>
-    	</div>
-  </div>
-</nav>
+		<div class="container-fluid w-90 d-flex flex-row justify-content-between align-items-center">
+			<a href="/" class="navbar-brand text-light">
+				<img src="../../images/logo-icon-light.png" alt="Logo" width="50" height="50" class="d-inline-block">
+				Get To Know
+			</a>
+
+			<!--     	Botón mostrado si el usuario no está en el listado de eventos -->
+			<a th:if="${requestURI != '/event/list/'}" href="/event/list/"
+				class="btn btn-link text-decoration-none text-light">
+				<span th:text="#{header.search.button}">Explora todos los eventos</span>
+				<i class="fa-solid fa-magnifying-glass ms-1" style="color: #ffffff;"></i>
+			</a>
+			<!--   		Botón mostrado si el usuario no está en la home -->
+			<!-- 		<a th:if="${requestURI != '/'}" href="/" class="btn btn-outline-secondary btn-sm rounded-pill text-light ms-auto homeButton"> -->
+			<!-- 			<i class="fa-solid fa-house ms-1" style="color: #ffffff;"></i> -->
+			<!--     		<span th:text="#{header.home.button}">Inicio</span> -->
+			<!--   		</a> -->
+
+			<div>
+				<div id="navbarNotLoggedContent" class="d-flex flex-row justify-content-end">
+					<!--     		Botones mostrados si el usuario no está logueado -->
+					<a th:if="${!isLogged}" href="/login/" class="btn btn-primary btn-sm rounded-pill notLoggedButton"
+						th:text="#{header.login.button}">Inicia sesión</a>
+					<a th:if="${!isLogged}" href="/register/"
+						class="btn btn-primary btn-sm rounded-pill notLoggedButton"
+						th:text="#{header.register.button}">Regístrate</a>
+				</div>
+
+				<div id="navbarLoggedContent" class="d-flex flex-row justify-content-evenly">
+					<!--       		Botón mostrado si el usuario es admin -->
+					<a th:if="${isAdmin}" href="/user/admin/" class="btn btn-outline-primary btn-sm rounded-circle"
+						data-toggle="tooltip" data-placement="bottom" th:title="#{header.admin.tooltip}">
+						<i class="fa-solid fa-gear fa-lg" style="color: #ffffff;"></i>
+					</a>
+
+					<!--       		Botones mostrados si el usuario está logueado     -->
+					<div th:if="${isLogged}" class="d-flex flex-column align-items-center position-relative">
+						<a class="btn btn-outline-primary btn-sm rounded-circle notification-button">
+							<i class="fa-solid fa-bell fa-lg" style="color: #ffffff;"></i>
+							<span th:if="${notifications.size() > 0}" th:text="${notifications.size()}"
+								class="badge bg-danger position-absolute translate-middle rounded-pill">
+							</span>
+						</a>
+
+						<!-- 		Pop up de notificaciones -->
+						<div id="notification-popup" class="notification-popup d-none">
+							<ul class="list-group">
+								<li th:each="notification : ${notifications}"
+									th:attr="data-id=${notification.id}" 
+									class="list-group-item d-flex justify-content-between align-items-start">
+									<div>
+										<small class="text-muted d-block" th:text="${#dates.format(notification.creationDate, 'dd/MM/yyyy HH:mm')}"></small>
+										<span th:utext="${notification.notification}"></span>
+									</div>
+									<button class="btn-close btn-sm"
+										th:onclick="'markAsRead(' + ${notification.id} + ');'"
+										aria-label="Close"></button>
+								</li>
+							</ul>
+							<div th:if="${notifications.isEmpty()}" class="text-center p-2 text-muted">
+								No tienes notificaciones pendientes de leer.
+							</div>
+							<div class="text-center p-2 text-muted d-none notificationsLive">
+							        No tienes notificaciones pendientes de leer.
+							</div>
+						</div>
+					</div>
+					<a th:if="${isLogged}" href="/chat/list/" class="btn btn-outline-primary btn-sm rounded-circle"
+						data-toggle="tooltip" data-placement="bottom" th:title="#{header.chats.tooltip}">
+						<i class="fa-solid fa-comments fa-lg" style="color: #ffffff;"></i>
+					</a>
+					<a th:if="${isLogged}" href="/user/profile/"
+						class="btn btn-outline-primary btn-sm align-content-center rounded-pill text-light personalAreaButton">
+						<i class="fa-solid fa-user fa-lg ms-1" style="color: #ffffff;"></i>
+						<span th:text="#{header.personal.area.button}">Area personal</span>
+					</a>
+					<a th:if="${isLogged}" href="/logout/"
+						class="btn btn-link align-content-center text-decoration-none btn-sm text-disabled">
+						<span th:text="#{header.logout.button}">Cerrar sesión</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</nav>
 </header>

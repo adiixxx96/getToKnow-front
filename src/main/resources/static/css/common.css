@@ -232,7 +232,58 @@ button, a{
       text-decoration: none;
    }
    
-/*About us and contact us*/
+/* ********************Notifications******************** */
+.notification-button .badge {
+	background-color: #D68FD6 !important;
+}
+
+.notification-popup {
+  width: 300px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 100%;
+  z-index: 1050;
+  margin-top:10px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-popup ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.notification-popup .list-group-item {
+  padding: 0.5rem 0.75rem;
+}
+
+.notification-popup p {
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.notification-popup p a {
+  color: #555E60;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.notification-popup p a:hover {
+  text-decoration: underline;
+}
+
+.notification-popup .btn-close {
+  border: none;
+  cursor: pointer;
+  width: 5px;
+  height: 5px;
+}
+   
+/* ********************About us and Contact us******************** */
 #aboutus-container {
   width: 70%;             
   margin: 0 auto;
