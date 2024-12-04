@@ -1,4 +1,3 @@
-
 function showSection(sectionId, element) {
     $('.content-section').hide();
     $('#' + sectionId).show();

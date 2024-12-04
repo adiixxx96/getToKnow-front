@@ -8,6 +8,15 @@ $(document).ready(function() {
 	});
 });
 
+//Function to show section in admin / profile page
+function showSection(sectionId, element) {
+    $('.content-section').hide();
+    $('#' + sectionId).show();
+    
+    $('.tabs .btn').removeClass('active');
+    $(element).addClass('active');
+}
+
 $(document).on('click', '#notification-popup .list-group-item a', function(e) {
 	e.preventDefault();
 	const notificationId = $(this).closest('.list-group-item').data('id');
